@@ -83,6 +83,7 @@
   - [ ] 통합 테스트 (브라우저에서 `/api/test-tour` 확인)
 
 - [x] C.타입 정의
+
   - [x] `lib/types/tour.ts` 생성
     - [x] `TourItem` 인터페이스 (목록)
     - [x] `TourDetail` 인터페이스 (상세)
@@ -92,7 +93,18 @@
     - [x] `AreaCode` 인터페이스 (지역코드)
     - [x] `CONTENT_TYPE_ID` 상수 (관광 타입 ID)
     - [x] `Coordinates` 인터페이스 (WGS84 좌표)
-  - [ ] `components/ui/toast.tsx` - 토스트 알림 (shadcn/ui)
+  - [x] `lib/types/stats.ts` 생성
+    - [x] `RegionStats` 인터페이스
+    - [x] `TypeStats` 인터페이스
+    - [x] `StatsSummary` 인터페이스
+    - [x] `BarChartDataPoint` 인터페이스
+    - [x] `PieChartDataPoint` 인터페이스
+
+- [x] E. 공통 컴포넌트
+  - [x] `components/ui/loading.tsx` - 로딩 스피너
+  - [x] `components/ui/skeleton.tsx` - 스켈레톤 UI
+  - [x] `components/ui/error.tsx` - 에러 메시지
+  - [ ] `components/ui/toast.tsx` - 토스트 알림 (Phase 2에서 필요 시 추가)
 
 ## Phase 2: 홈페이지 (`/`) - 관광지 목록
 
