@@ -63,16 +63,131 @@
     - [ ] 빌드 시 환경변수 정상 로딩 확인 (`pnpm build`)
 
 - [ ] B. API 클라이언트 구현
+
+  **구현할 주요 컴포넌트/기능:**
+
+  - `lib/api/tour-api.ts` - 한국관광공사 API 호출 함수 모음
+  - 7개 API 엔드포인트 래퍼 함수 구현
+  - 공통 파라미터 자동 처리 유틸리티
+  - 에러 핸들링 및 재시도 로직
+  - TypeScript 타입 안전성 보장
+
+  **특별히 주의할 요구사항/제약사항:**
+
+  - ⚠️ **Base URL**: `https://apis.data.go.kr/B551011/KorService2` (고정)
+  - ⚠️ **공통 파라미터**: 모든 API에 `serviceKey`, `MobileOS="ETC"`, `MobileApp="MyTrip"`, `_type="json"` 필수
+  - ⚠️ **Rate Limit**: 공공 API 호출 제한 존재 (과도한 호출 주의)
+  - ⚠️ **응답 속도**: API 응답이 느릴 수 있음 (타임아웃 설정 필요)
+  - ⚠️ **데이터 품질**: 일부 필드가 누락되거나 빈 문자열일 수 있음 (옵셔널 처리)
+  - ⚠️ **좌표 변환**: `mapx`, `mapy`는 KATEC 좌표계 정수형 → `10000000`으로 나누어 WGS84로 변환
+  - 💡 **참고**: PRD 4절 API 명세, 8.1절 API 제약사항 참조
+
+  **작업 체크리스트:**
+
   - [ ] `lib/api/tour-api.ts` 생성
-    - [ ] `getAreaCode()` - 지역코드 조회 (`areaCode2`)
-    - [ ] `getAreaBasedList()` - 지역 기반 목록 (`areaBasedList2`)
-    - [ ] `searchKeyword()` - 키워드 검색 (`searchKeyword2`)
-    - [ ] `getDetailCommon()` - 공통 정보 (`detailCommon2`)
-    - [ ] `getDetailIntro()` - 소개 정보 (`detailIntro2`)
-    - [ ] `getDetailImage()` - 이미지 목록 (`detailImage2`)
-    - [ ] `getDetailPetTour()` - 반려동물 정보 (`detailPetTour2`)
-    - [ ] 공통 파라미터 처리 (serviceKey, MobileOS, MobileApp, \_type)
+
+    - [ ] Base URL 상수 정의
+      ```typescript
+      const BASE_URL = "https://apis.data.go.kr/B551011/KorService2";
+      ```
+    - [ ] 공통 파라미터 타입 정의
+      ```typescript
+      interface CommonParams {
+        serviceKey: string;
+        MobileOS: "ETC";
+        MobileApp: "MyTrip";
+        _type: "json";
+        numOfRows?: number;
+        pageNo?: number;
+      }
+      ```
+    - [ ] 공통 파라미터 생성 헬퍼 함수
+
+      - [ ] `buildCommonParams()` - 환경변수에서 serviceKey 자동 주입
+      - [ ] URL 쿼리 스트링 생성 유틸리티
+
+    - [ ] `getAreaCode()` - 지역코드 조회 (`/areaCode2`)
+
+      - 엔드포인트: `${BASE_URL}/areaCode2`
+      - 필수 파라미터: serviceKey, MobileOS, MobileApp
+      - 선택 파라미터: `areaCode` (시/도 코드, 없으면 전체 시/도 목록)
+      - 반환 타입: `AreaCode[]` (지역 코드 배열)
+      - 용도: 지역 필터 드롭다운 생성
+
+    - [ ] `getAreaBasedList()` - 지역 기반 목록 (`/areaBasedList2`)
+
+      - 엔드포인트: `${BASE_URL}/areaBasedList2`
+      - 필수 파라미터: serviceKey, MobileOS, MobileApp
+      - 선택 파라미터:
+        - `areaCode` (지역 코드)
+        - `contentTypeId` (관광 타입: 12, 14, 15, 25, 28, 32, 38, 39)
+        - `numOfRows` (기본값: 20)
+        - `pageNo` (기본값: 1)
+      - 반환 타입: `{ items: TourItem[], totalCount: number }`
+      - 용도: 홈페이지 관광지 목록, 필터링
+
+    - [ ] `searchKeyword()` - 키워드 검색 (`/searchKeyword2`)
+
+      - 엔드포인트: `${BASE_URL}/searchKeyword2`
+      - 필수 파라미터: serviceKey, MobileOS, MobileApp, `keyword`
+      - 선택 파라미터: `areaCode`, `contentTypeId`, `numOfRows`, `pageNo`
+      - 반환 타입: `{ items: TourItem[], totalCount: number }`
+      - 용도: 검색 기능
+      - 주의: 키워드는 URL 인코딩 필요 (`encodeURIComponent`)
+
+    - [ ] `getDetailCommon()` - 공통 정보 (`/detailCommon2`)
+
+      - 엔드포인트: `${BASE_URL}/detailCommon2`
+      - 필수 파라미터: serviceKey, MobileOS, MobileApp, `contentId`
+      - 선택 파라미터: `defaultYN="Y"`, `firstImageYN="Y"`, `areacodeYN="Y"`, `addrinfoYN="Y"`, `overviewYN="Y"`
+      - 반환 타입: `TourDetail`
+      - 용도: 상세페이지 기본 정보 (제목, 주소, 이미지, 개요 등)
+
+    - [ ] `getDetailIntro()` - 소개 정보 (`/detailIntro2`)
+
+      - 엔드포인트: `${BASE_URL}/detailIntro2`
+      - 필수 파라미터: serviceKey, MobileOS, MobileApp, `contentId`, `contentTypeId`
+      - 반환 타입: `TourIntro`
+      - 용도: 상세페이지 운영 정보 (운영시간, 휴무일, 요금, 주차 등)
+      - 주의: contentTypeId에 따라 반환 필드가 다름 (타입별 인터페이스 필요)
+
+    - [ ] `getDetailImage()` - 이미지 목록 (`/detailImage2`)
+
+      - 엔드포인트: `${BASE_URL}/detailImage2`
+      - 필수 파라미터: serviceKey, MobileOS, MobileApp, `contentId`
+      - 선택 파라미터: `imageYN="Y"`, `subImageYN="Y"`
+      - 반환 타입: `TourImage[]`
+      - 용도: 상세페이지 이미지 갤러리
+
+    - [ ] `getDetailPetTour()` - 반려동물 정보 (`/detailPetTour2`)
+
+      - 엔드포인트: `${BASE_URL}/detailPetTour2`
+      - 필수 파라미터: serviceKey, MobileOS, MobileApp, `contentId`
+      - 반환 타입: `PetTourInfo`
+      - 용도: 상세페이지 반려동물 동반 정보
+      - 주의: 데이터가 없을 수 있음 (옵셔널 처리)
+
+    - [ ] 공통 파라미터 처리
+
+      - [ ] 환경변수에서 `TOUR_API_KEY` 또는 `NEXT_PUBLIC_TOUR_API_KEY` 자동 로드
+      - [ ] 모든 API 호출에 공통 파라미터 자동 추가
+      - [ ] URL 쿼리 스트링 자동 생성 (`URLSearchParams` 사용)
+      - [ ] 한글 파라미터 자동 인코딩
+
     - [ ] 에러 처리 및 재시도 로직
+      - [ ] HTTP 상태 코드 체크 (200이 아니면 에러)
+      - [ ] API 응답 구조 검증 (`response.header.resultCode === "0000"`)
+      - [ ] 타임아웃 설정 (10초)
+      - [ ] 재시도 로직 (최대 3회, 지수 백오프)
+      - [ ] 에러 메시지 한글화
+      - [ ] 커스텀 에러 클래스 정의 (`TourAPIError`)
+      - [ ] 에러 로깅 (개발 환경에서 `console.error`)
+
+  - [ ] 테스트 (선택 사항)
+    - [ ] 각 API 함수별 단위 테스트 작성
+    - [ ] Mock 데이터로 응답 파싱 테스트
+    - [ ] 에러 케이스 테스트 (네트워크 에러, API 에러 등)
+
 - [ ] C타입 정의
   - [ ] `lib/types/tour.ts` 생성
     - [ ] `TourItem` 인터페이스 (목록)
