@@ -82,17 +82,22 @@
     - [ ] 에러 처리 테스트 (401, 404, 네트워크 에러)
   - [ ] 통합 테스트 (브라우저에서 `/api/test-tour` 확인)
 
-- [ ] C타입 정의
-  - [ ] `lib/types/tour.ts` 생성
-    - [ ] `TourItem` 인터페이스 (목록)
-    - [ ] `TourDetail` 인터페이스 (상세)
-    - [ ] `TourIntro` 인터페이스 (운영정보)
-    - [ ] `TourImage` 인터페이스 (이미지)
-    - [ ] `PetTourInfo` 인터페이스 (반려동물)
-  - [ ] `lib/types/stats.ts` 생성
-    - [ ] `RegionStats` 인터페이스
-    - [ ] `TypeStats` 인터페이스
-    - [ ] `StatsSummary` 인터페이스
+- [x] C.타입 정의
+  - [x] `lib/types/tour.ts` 생성
+    - [x] `TourItem` 인터페이스 (목록)
+    - [x] `TourDetail` 인터페이스 (상세)
+    - [x] `TourIntro` 인터페이스 (운영정보)
+    - [x] `TourImage` 인터페이스 (이미지)
+    - [x] `PetTourInfo` 인터페이스 (반려동물)
+    - [x] `AreaCode` 인터페이스 (지역코드)
+    - [x] `CONTENT_TYPE_ID` 상수 (관광 타입 ID)
+    - [x] `Coordinates` 인터페이스 (WGS84 좌표)
+  - [x] `lib/types/stats.ts` 생성
+    - [x] `RegionStats` 인터페이스
+    - [x] `TypeStats` 인터페이스
+    - [x] `StatsSummary` 인터페이스
+    - [x] `BarChartDataPoint` 인터페이스
+    - [x] `PieChartDataPoint` 인터페이스
 - [ ] D.레이아웃 구조
   - [ ] `app/layout.tsx` 업데이트
     - [ ] 메타데이터 설정
