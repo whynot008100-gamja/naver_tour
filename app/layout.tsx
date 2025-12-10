@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SaaS 템플릿",
-  description: "Next.js + Clerk + Supabase 보일러플레이트",
+  title: "My Trip - 한국 관광지 정보 서비스",
+  description: "한국관광공사 API를 활용한 전국 관광지 검색 및 정보 제공 서비스",
 };
 
 export default function RootLayout({

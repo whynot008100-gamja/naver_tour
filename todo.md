@@ -92,32 +92,15 @@
     - [x] `AreaCode` 인터페이스 (지역코드)
     - [x] `CONTENT_TYPE_ID` 상수 (관광 타입 ID)
     - [x] `Coordinates` 인터페이스 (WGS84 좌표)
-  - [x] `lib/types/stats.ts` 생성
-    - [x] `RegionStats` 인터페이스
-    - [x] `TypeStats` 인터페이스
-    - [x] `StatsSummary` 인터페이스
-    - [x] `BarChartDataPoint` 인터페이스
-    - [x] `PieChartDataPoint` 인터페이스
-- [ ] D.레이아웃 구조
-  - [ ] `app/layout.tsx` 업데이트
-    - [ ] 메타데이터 설정
-    - [ ] 헤더/푸터 구조 확인
-  - [ ] `components/Navbar.tsx` 업데이트
-    - [ ] 로고, 검색창, 로그인 버튼
-    - [ ] 네비게이션 링크 (홈, 통계, 북마크)
-- [ ] E.공통 컴포넌트
-  - [ ] `components/ui/loading.tsx` - 로딩 스피너
-  - [ ] `components/ui/skeleton.tsx` - 스켈레톤 UI
-  - [ ] `components/ui/error.tsx` - 에러 메시지
   - [ ] `components/ui/toast.tsx` - 토스트 알림 (shadcn/ui)
 
 ## Phase 2: 홈페이지 (`/`) - 관광지 목록
 
-- [ ] 페이지 기본 구조
+- [ ] A.페이지 기본 구조
   - [ ] `app/page.tsx` 생성
     - [ ] 기본 레이아웃 (헤더, 메인, 푸터)
     - [ ] 반응형 컨테이너 설정
-- [ ] 관광지 목록 기능 (MVP 2.1)
+- [ ] B.관광지 목록 기능 (MVP 2.1)
   - [ ] `components/tour-card.tsx` 생성
     - [ ] 썸네일 이미지 (기본 이미지 fallback)
     - [ ] 관광지명
@@ -135,7 +118,7 @@
     - [ ] `getAreaBasedList()` 호출
     - [ ] 데이터 파싱 및 표시
     - [ ] 에러 처리
-- [ ] 필터 기능
+- [ ] C.필터 기능
   - [ ] `components/tour-filters.tsx` 생성
     - [ ] 지역 필터 (시/도 선택)
       - [ ] `getAreaCode()` API로 지역 목록 로드
@@ -155,7 +138,7 @@
   - [ ] 필터 적용 로직
     - [ ] 필터 변경 시 API 재호출
     - [ ] 필터 조합 처리
-- [ ] 검색 기능 (MVP 2.3)
+- [ ] D.검색 기능 (MVP 2.3)
   - [ ] `components/tour-search.tsx` 생성
     - [ ] 검색창 UI (헤더 또는 메인 영역)
     - [ ] 검색 아이콘
