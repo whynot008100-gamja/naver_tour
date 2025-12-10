@@ -9,38 +9,58 @@
   **구현할 주요 컴포넌트/기능:**
 
   - `.env` 파일 생성 및 환경변수 설정
-  - `.env.example` 파일 생성 (팀원 공유용 템플릿)
-  - 환경변수 타입 안전성 검증 (TypeScript)
-  - 한국관광공사 API 키 발급 및 설정
-  - 네이버 클라우드 플랫폼(NCP) Maps API 키 발급
-  - Clerk 프로젝트 생성 및 인증 키 설정
-  - Supabase 프로젝트 생성 및 DB 연결 키 설정
+  - `.env.example` 파일 생성 (팀 공유용 템플릿)
+  - 환경변수 타입 안전성 검증 (선택 사항)
+  - 환경변수 로딩 확인 및 테스트
 
   **특별히 주의할 요구사항/제약사항:**
 
-  - ⚠️ **API 키 보안**: `.env` 파일은 절대 Git에 커밋하지 않음 (`.gitignore` 확인)
-  - ⚠️ **클라이언트 노출**: `NEXT_PUBLIC_` 접두사가 있는 환경변수만 브라우저에서 접근 가능
-  - ⚠️ **서버 사이드 전용**: `TOUR_API_KEY`는 서버 컴포넌트/API 라우트에서만 사용 (클라이언트 노출 방지)
-  - ⚠️ **네이버 지도 API**: NCP Maps API v3는 `ncpKeyId` 파라미터 사용 (구 `ncpClientId` 아님)
-  - ⚠️ **Vercel 배포**: 프로덕션 환경변수는 Vercel 대시보드에서 별도 설정 필요
-  - ⚠️ **HTTPS 필수**: 클립보드 API(`navigator.clipboard`) 사용을 위해 HTTPS 환경 필요
-  - 📌 **한국관광공사 API**: 공공데이터포털(data.go.kr)에서 발급, 승인까지 1-2일 소요 가능
-  - 📌 **네이버 지도 API**: 신용카드 등록 필수, 월 10,000,000건 무료
-  - 📌 **Supabase**: 무료 플랜은 500MB 데이터베이스, 1GB 파일 스토리지 제공
+  - ⚠️ **보안**: API 키는 절대 Git에 커밋하지 않기 (`.gitignore` 확인)
+  - ⚠️ **클라이언트 노출**: `NEXT_PUBLIC_` 접두사는 브라우저에 노출됨 (민감한 키는 사용 금지)
+  - ⚠️ **서버 전용 키**: `CLERK_SECRET_KEY`, `SUPABASE_SERVICE_ROLE_KEY`는 절대 `NEXT_PUBLIC_` 사용 금지
+  - ⚠️ **한국관광공사 API**: 두 가지 키 모두 설정 필요 (클라이언트/서버 각각)
+  - ⚠️ **네이버 지도**: NCP(네이버 클라우드 플랫폼)에서 발급, 신용카드 등록 필수
+  - 💡 **참고**: PRD 8.4절 보안 및 환경변수 섹션 참조
+
+  **작업 체크리스트:**
 
   - [ ] 환경변수 설정 (`.env`)
-    - [ ] `NEXT_PUBLIC_TOUR_API_KEY` (한국관광공사 API - 클라이언트 사이드)
-    - [ ] `TOUR_API_KEY` (한국관광공사 API - 서버 사이드 전용)
-    - [ ] `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` (네이버 지도 ncpKeyId)
-    - [ ] `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (Clerk 공개 키)
-    - [ ] `CLERK_SECRET_KEY` (Clerk 비밀 키 - 서버 전용)
-    - [ ] `NEXT_PUBLIC_SUPABASE_URL` (Supabase 프로젝트 URL)
-    - [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Supabase 익명 키)
-    - [ ] `SUPABASE_SERVICE_ROLE_KEY` (Supabase 서비스 롤 키 - 서버 전용)
-    - [ ] `NEXT_PUBLIC_STORAGE_BUCKET=uploads` (Supabase 스토리지 버킷명)
-  - [ ] `.env.example` 파일 생성 (키 값은 제외하고 구조만)
-  - [ ] 환경변수 타입 정의 (`lib/env.ts` 또는 `env.d.ts`)
-  - [ ] 환경변수 검증 로직 추가 (필수 키 누락 시 에러)
+    - [ ] `NEXT_PUBLIC_TOUR_API_KEY` (한국관광공사 API - 클라이언트용)
+      - 발급처: https://www.data.go.kr/
+      - 용도: 클라이언트 사이드 API 호출
+    - [ ] `TOUR_API_KEY` (한국관광공사 API - 서버용)
+      - 발급처: https://www.data.go.kr/
+      - 용도: 서버 사이드 API 호출 (Next.js API Routes)
+    - [ ] `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` (네이버 지도)
+      - 발급처: https://console.ncloud.com/
+      - 용도: 네이버 지도 API v3 초기화
+      - 주의: Web Dynamic Map 서비스 활성화 필요
+    - [ ] Clerk 인증 키 확인
+      - [ ] `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+        - 발급처: https://dashboard.clerk.com/
+        - 용도: 클라이언트 사이드 인증
+      - [ ] `CLERK_SECRET_KEY`
+        - 용도: 서버 사이드 인증 (절대 클라이언트 노출 금지)
+    - [ ] Supabase 키 확인
+      - [ ] `NEXT_PUBLIC_SUPABASE_URL`
+        - 발급처: https://supabase.com/dashboard/
+        - 형식: https://[project-id].supabase.co
+      - [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+        - 용도: 클라이언트 사이드 DB 접근 (RLS 적용)
+      - [ ] `SUPABASE_SERVICE_ROLE_KEY`
+        - 용도: 서버 사이드 DB 접근 (RLS 우회 가능, 절대 클라이언트 노출 금지)
+      - [ ] `NEXT_PUBLIC_STORAGE_BUCKET` (선택 사항)
+        - 기본값: "uploads"
+  - [ ] `.env.example` 파일 생성
+    - [ ] 모든 환경변수 키 나열 (값은 placeholder)
+    - [ ] 각 환경변수에 대한 주석 추가 (발급처, 용도)
+  - [ ] `.gitignore` 확인
+    - [ ] `.env` 파일이 무시 목록에 있는지 확인
+    - [ ] `.env.local`, `.env.production` 등도 포함되어 있는지 확인
+  - [ ] 환경변수 로딩 테스트
+    - [ ] `app/page.tsx`에서 `console.log`로 환경변수 확인
+    - [ ] 서버/클라이언트 각각에서 접근 가능 여부 확인
+    - [ ] 빌드 시 환경변수 정상 로딩 확인 (`pnpm build`)
 
 - [ ] B. API 클라이언트 구현
   - [ ] `lib/api/tour-api.ts` 생성
