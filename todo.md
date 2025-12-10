@@ -42,16 +42,46 @@
     - [ ] Supabase 데이터베이스 연결 테스트
 
 - [ ] B. API 클라이언트 구현
-  - [ ] `lib/api/tour-api.ts` 생성
-    - [ ] `getAreaCode()` - 지역코드 조회 (`areaCode2`)
-    - [ ] `getAreaBasedList()` - 지역 기반 목록 (`areaBasedList2`)
-    - [ ] `searchKeyword()` - 키워드 검색 (`searchKeyword2`)
-    - [ ] `getDetailCommon()` - 공통 정보 (`detailCommon2`)
-    - [ ] `getDetailIntro()` - 소개 정보 (`detailIntro2`)
-    - [ ] `getDetailImage()` - 이미지 목록 (`detailImage2`)
-    - [ ] `getDetailPetTour()` - 반려동물 정보 (`detailPetTour2`)
-    - [ ] 공통 파라미터 처리 (serviceKey, MobileOS, MobileApp, \_type)
-    - [ ] 에러 처리 및 재시도 로직
+
+  **구현할 주요 컴포넌트/기능:**
+
+  - `lib/api/tour-api.ts` 파일 생성
+  - 한국관광공사 API 호출 함수 7개 구현
+  - 공통 파라미터 처리 (serviceKey, MobileOS, MobileApp, \_type)
+  - 에러 처리 및 재시도 로직 (최대 3회, 지수 백오프)
+  - TypeScript 타입 안전성 보장
+
+  **특별히 주의할 요구사항:**
+
+  - 환경변수 우선순위: 서버(`TOUR_API_KEY`) > 클라이언트(`NEXT_PUBLIC_TOUR_API_KEY`)
+  - API Rate Limit 고려 (공공 API 호출 제한)
+  - 좌표 변환: KATEC → WGS84 (mapx/mapy / 10000000)
+  - 데이터 품질: 일부 관광지는 이미지/정보 누락 가능
+  - 타임아웃 설정 (응답 속도 고려)
+
+  - [x] `lib/api/` 디렉토리 생성
+  - [x] `lib/api/tour-api.ts` 생성
+    - [x] 상수 정의 (BASE_URL, MOBILE_OS, MOBILE_APP, RESPONSE_TYPE)
+    - [x] 환경변수 로드 함수 (`getApiKey()`)
+    - [x] 공통 파라미터 생성 함수 (`buildCommonParams()`)
+    - [x] API 호출 헬퍼 함수 (`fetchTourApi()`)
+    - [x] 에러 처리 함수 (`handleApiError()`)
+    - [x] 재시도 로직 (`retryFetch()`)
+    - [x] `getAreaCode()` - 지역코드 조회 (`areaCode2`)
+    - [x] `getAreaBasedList()` - 지역 기반 목록 (`areaBasedList2`)
+    - [x] `searchKeyword()` - 키워드 검색 (`searchKeyword2`)
+    - [x] `getDetailCommon()` - 공통 정보 (`detailCommon2`)
+    - [x] `getDetailIntro()` - 소개 정보 (`detailIntro2`)
+    - [x] `getDetailImage()` - 이미지 목록 (`detailImage2`)
+    - [x] `getDetailPetTour()` - 반려동물 정보 (`detailPetTour2`)
+    - [x] JSDoc 주석 추가 (각 함수 설명)
+  - [x] 테스트 API Route 생성 (`app/api/test-tour/route.ts`)
+  - [ ] 단위 테스트 (수동)
+    - [ ] 환경변수 로드 테스트
+    - [ ] 개별 API 함수 테스트
+    - [ ] 에러 처리 테스트 (401, 404, 네트워크 에러)
+  - [ ] 통합 테스트 (브라우저에서 `/api/test-tour` 확인)
+
 - [ ] C타입 정의
   - [ ] `lib/types/tour.ts` 생성
     - [ ] `TourItem` 인터페이스 (목록)
