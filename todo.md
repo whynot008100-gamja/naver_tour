@@ -100,6 +100,17 @@
     - [x] `BarChartDataPoint` 인터페이스
     - [x] `PieChartDataPoint` 인터페이스
 
+- [x] D. 레이아웃 구조
+
+  - [x] [app/layout.tsx](cci:7://file:///c:/Coding/naver_tour/app/layout.tsx:0:0-0:0) 업데이트
+    - [x] 메타데이터 설정 (My Trip 프로젝트용)
+  - [x] [components/Navbar.tsx](cci:7://file:///c:/Coding/naver_tour/components/Navbar.tsx:0:0-0:0) 업데이트
+    - [x] 로고 ("My Trip")
+    - [x] 검색창 (반응형: 모바일 하단, 데스크톱 상단)
+    - [x] 네비게이션 링크 (홈, 통계, 북마크)
+    - [x] Clerk 인증 연동 (SignInButton, UserButton)
+  - [x] SaaS 템플릿 콘텐츠 제거 ([app/page.tsx](cci:7://file:///c:/Coding/naver_tour/app/page.tsx:0:0-0:0))
+
 - [x] E. 공통 컴포넌트
   - [x] `components/ui/loading.tsx` - 로딩 스피너
   - [x] `components/ui/skeleton.tsx` - 스켈레톤 UI
