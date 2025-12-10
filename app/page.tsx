@@ -1,41 +1,25 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { RiSupabaseFill } from "react-icons/ri";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="min-h-[calc(100vh-80px)] flex items-center px-8 py-16 lg:py-24">
-      <section className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start lg:items-center">
-        {/* 좌측: 환영 메시지 */}
-        <div className="flex flex-col gap-8">
-          <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-            SaaS 앱 템플릿에 오신 것을 환영합니다
+    <main className="flex-1">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center space-y-4 py-12">
+          <h1 className="text-4xl font-bold tracking-tight">
+            한국 관광지 정보 서비스
           </h1>
-          <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-400 leading-relaxed">
-            Next.js, Shadcn, Clerk, Supabase, TailwindCSS로 구동되는 완전한
-            기능의 템플릿으로 다음 프로젝트를 시작하세요.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            한국관광공사 API를 활용하여 전국의 관광지 정보를 검색하고 확인하세요.
           </p>
         </div>
 
-        {/* 우측: 버튼 두 개 세로 정렬 */}
-        <div className="flex flex-col gap-6">
-          <Link href="/storage-test" className="w-full">
-            <Button className="w-full h-28 flex items-center justify-center gap-4 text-xl shadow-lg hover:shadow-xl transition-shadow">
-              <RiSupabaseFill className="w-8 h-8" />
-              <span>Storage 파일 업로드 테스트</span>
-            </Button>
-          </Link>
-          <Link href="/auth-test" className="w-full">
-            <Button
-              className="w-full h-28 flex items-center justify-center gap-4 text-xl shadow-lg hover:shadow-xl transition-shadow"
-              variant="outline"
-            >
-              <RiSupabaseFill className="w-8 h-8" />
-              <span>Clerk + Supabase 인증 연동</span>
-            </Button>
-          </Link>
+        {/* TODO: Phase 2에서 구현 예정 */}
+        {/* - 관광지 목록 (TourList) */}
+        {/* - 필터 기능 (TourFilters) */}
+        {/* - 네이버 지도 연동 (NaverMap) */}
+        
+        <div className="mt-12 text-center text-sm text-muted-foreground">
+          <p>관광지 목록 및 지도는 Phase 2에서 구현 예정입니다.</p>
         </div>
-      </section>
+      </div>
     </main>
   );
 }
