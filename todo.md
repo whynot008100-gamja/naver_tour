@@ -188,17 +188,261 @@
     - [ ] Mock 데이터로 응답 파싱 테스트
     - [ ] 에러 케이스 테스트 (네트워크 에러, API 에러 등)
 
-- [ ] C타입 정의
+- [ ] C. 타입 정의
+
+  **구현할 주요 컴포넌트/기능:**
+
+  - `lib/types/tour.ts` - 관광지 관련 TypeScript 인터페이스
+  - `lib/types/stats.ts` - 통계 관련 TypeScript 인터페이스
+  - API 응답 데이터 구조 타입 정의
+  - 컴포넌트 Props 타입 정의
+  - 유틸리티 타입 정의
+
+  **특별히 주의할 요구사항/제약사항:**
+
+  - ⚠️ **옵셔널 필드**: API 응답의 대부분 필드는 누락될 수 있음 (`?` 사용)
+  - ⚠️ **문자열 타입**: API는 모든 값을 문자열로 반환 (숫자도 `string` 타입)
+  - ⚠️ **좌표 타입**: `mapx`, `mapy`는 문자열이지만 숫자로 변환 필요
+  - ⚠️ **타입별 차이**: `TourIntro`는 `contenttypeid`에 따라 필드가 다름
+  - ⚠️ **일관성**: PRD 5절 데이터 구조와 정확히 일치해야 함
+  - 💡 **참고**: PRD 5절 데이터 구조, 2.5절 반려동물 정보 참조
+
+  **작업 체크리스트:**
+
   - [ ] `lib/types/tour.ts` 생성
+
     - [ ] `TourItem` 인터페이스 (목록)
+
+      - PRD 5.1절 참조
+      - 필수 필드: `contentid`, `contenttypeid`, `title`, `addr1`, `areacode`, `mapx`, `mapy`, `modifiedtime`
+      - 옵셔널 필드: `addr2`, `firstimage`, `firstimage2`, `tel`, `cat1`, `cat2`, `cat3`
+      - 용도: `getAreaBasedList()`, `searchKeyword()` 응답
+
+      ```typescript
+      interface TourItem {
+        contentid: string;
+        contenttypeid: string;
+        title: string;
+        addr1: string;
+        addr2?: string;
+        areacode: string;
+        mapx: string; // KATEC 좌표 (정수 문자열)
+        mapy: string; // KATEC 좌표 (정수 문자열)
+        firstimage?: string;
+        firstimage2?: string;
+        tel?: string;
+        cat1?: string;
+        cat2?: string;
+        cat3?: string;
+        modifiedtime: string;
+      }
+      ```
+
     - [ ] `TourDetail` 인터페이스 (상세)
+
+      - PRD 5.2절 참조
+      - 필수 필드: `contentid`, `contenttypeid`, `title`, `addr1`, `mapx`, `mapy`
+      - 옵셔널 필드: `addr2`, `zipcode`, `tel`, `homepage`, `overview`, `firstimage`, `firstimage2`
+      - 용도: `getDetailCommon()` 응답
+
+      ```typescript
+      interface TourDetail {
+        contentid: string;
+        contenttypeid: string;
+        title: string;
+        addr1: string;
+        addr2?: string;
+        zipcode?: string;
+        tel?: string;
+        homepage?: string;
+        overview?: string; // 긴 설명문
+        firstimage?: string;
+        firstimage2?: string;
+        mapx: string;
+        mapy: string;
+      }
+      ```
+
     - [ ] `TourIntro` 인터페이스 (운영정보)
+
+      - PRD 5.3절 참조
+      - 기본 필드: `contentid`, `contenttypeid`
+      - 공통 옵셔널 필드: `usetime`, `restdate`, `infocenter`, `parking`, `chkpet`
+      - 주의: `contenttypeid`에 따라 추가 필드가 다름
+      - 용도: `getDetailIntro()` 응답
+
+      ```typescript
+      interface TourIntro {
+        contentid: string;
+        contenttypeid: string;
+        // 공통 필드
+        usetime?: string; // 이용시간
+        restdate?: string; // 휴무일
+        infocenter?: string; // 문의처
+        parking?: string; // 주차 가능
+        chkpet?: string; // 반려동물 동반
+        // 타입별 추가 필드는 필요시 확장
+        [key: string]: any; // 타입별 동적 필드 허용
+      }
+      ```
+
     - [ ] `TourImage` 인터페이스 (이미지)
+
+      - 용도: `getDetailImage()` 응답
+
+      ```typescript
+      interface TourImage {
+        contentid: string;
+        originimgurl: string; // 원본 이미지 URL
+        smallimageurl?: string; // 썸네일 이미지 URL
+        imgname?: string; // 이미지명
+        serialnum?: string; // 일련번호
+      }
+      ```
+
     - [ ] `PetTourInfo` 인터페이스 (반려동물)
+
+      - PRD 2.5절 참조
+      - 용도: `getDetailPetTour()` 응답
+
+      ```typescript
+      interface PetTourInfo {
+        contentid: string;
+        contenttypeid: string;
+        chkpetleash?: string; // 애완동물 동반 여부
+        chkpetsize?: string; // 애완동물 크기
+        chkpetplace?: string; // 입장 가능 장소
+        chkpetfee?: string; // 추가 요금
+        petinfo?: string; // 기타 반려동물 정보
+        parking?: string; // 주차장 정보
+      }
+      ```
+
+    - [ ] `AreaCode` 인터페이스 (지역 코드)
+
+      - 용도: `getAreaCode()` 응답
+
+      ```typescript
+      interface AreaCode {
+        code: string; // 지역 코드
+        name: string; // 지역명 (예: "서울", "부산")
+        rnum?: number; // 순번
+      }
+      ```
+
+    - [ ] API 응답 래퍼 타입
+
+      ```typescript
+      interface APIResponse<T> {
+        response: {
+          header: {
+            resultCode: string;
+            resultMsg: string;
+          };
+          body: {
+            items?: {
+              item: T | T[]; // 단일 또는 배열
+            };
+            numOfRows?: number;
+            pageNo?: number;
+            totalCount?: number;
+          };
+        };
+      }
+      ```
+
+    - [ ] Content Type ID 상수
+
+      ```typescript
+      export const CONTENT_TYPE_ID = {
+        TOURIST_SPOT: "12", // 관광지
+        CULTURAL_FACILITY: "14", // 문화시설
+        FESTIVAL: "15", // 축제/행사
+        TRAVEL_COURSE: "25", // 여행코스
+        LEPORTS: "28", // 레포츠
+        ACCOMMODATION: "32", // 숙박
+        SHOPPING: "38", // 쇼핑
+        RESTAURANT: "39", // 음식점
+      } as const;
+
+      export type ContentTypeId =
+        (typeof CONTENT_TYPE_ID)[keyof typeof CONTENT_TYPE_ID];
+      ```
+
   - [ ] `lib/types/stats.ts` 생성
+
     - [ ] `RegionStats` 인터페이스
+
+      - 용도: 지역별 통계 데이터
+
+      ```typescript
+      interface RegionStats {
+        areaCode: string;
+        areaName: string;
+        count: number;
+      }
+      ```
+
     - [ ] `TypeStats` 인터페이스
+
+      - 용도: 타입별 통계 데이터
+
+      ```typescript
+      interface TypeStats {
+        contentTypeId: string;
+        typeName: string;
+        count: number;
+        percentage: number; // 백분율
+      }
+      ```
+
     - [ ] `StatsSummary` 인터페이스
+      - 용도: 전체 통계 요약
+      ```typescript
+      interface StatsSummary {
+        totalCount: number;
+        topRegions: RegionStats[]; // Top 3
+        topTypes: TypeStats[]; // Top 3
+        lastUpdated: string; // ISO 8601 날짜
+      }
+      ```
+
+  - [ ] 공통 유틸리티 타입 (선택 사항)
+
+    - [ ] 페이지네이션 타입
+
+      ```typescript
+      interface PaginationParams {
+        numOfRows?: number;
+        pageNo?: number;
+      }
+
+      interface PaginatedResponse<T> {
+        items: T[];
+        totalCount: number;
+        currentPage: number;
+        itemsPerPage: number;
+      }
+      ```
+
+    - [ ] 필터 타입
+      ```typescript
+      interface TourFilters {
+        areaCode?: string;
+        contentTypeId?: string;
+        keyword?: string;
+        petFriendly?: boolean;
+      }
+      ```
+
+  - [ ] 타입 export 정리
+    - [ ] `lib/types/index.ts` 생성 (선택 사항)
+    - [ ] 모든 타입을 한 곳에서 re-export
+    ```typescript
+    export * from "./tour";
+    export * from "./stats";
+    ```
+
 - [ ] D.레이아웃 구조
   - [ ] `app/layout.tsx` 업데이트
     - [ ] 메타데이터 설정
