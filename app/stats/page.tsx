@@ -1,12 +1,23 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { BarChart3, MapPin, Users, TrendingUp } from 'lucide-react';
-import { getStatsSummary } from '@/lib/api/stats-api';
+import { getStatsSummary, getRegionStats, getTypeStats } from '@/lib/api/stats-api';
+import { RegionChart } from '@/components/stats/region-chart';
+import { TypeChart } from '@/components/stats/type-chart';
 
 export const revalidate = 3600; // 1시간마다 재검증
 
 export default async function StatsPage() {
-  // 통계 데이터 조회
-  const summary = await getStatsSummary();
+  // 통계 데이터 병렬 조회
+  const [summary, regionStats, typeStats] = await Promise.all([
+    getStatsSummary(),
+    getRegionStats(),
+    getTypeStats(),
+  ]);
+
+  // Top 3 추출
+  const top3Regions = regionStats.slice(0, 3);
+  const top3Types = typeStats.slice(0, 3);
 
   return (
     <main className="min-h-screen bg-background">
@@ -93,29 +104,67 @@ export default async function StatsPage() {
             </Card>
           </div>
 
-          {/* 차트 영역 (Phase 4C-4D에서 구현) */}
+          {/* Top 3 섹션 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Top 3 지역 */}
             <Card>
               <CardHeader>
-                <CardTitle>지역별 관광지</CardTitle>
+                <CardTitle>Top 3 지역</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-80 flex items-center justify-center text-muted-foreground">
-                  차트 영역 (Phase 4C)
+                <div className="space-y-4">
+                  {top3Regions.map((region, index) => (
+                    <div key={region.code} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <div className="font-medium">{region.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {region.count.toLocaleString()}개
+                          </div>
+                        </div>
+                      </div>
+                      <Badge variant="secondary">{region.code}</Badge>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
 
+            {/* Top 3 타입 */}
             <Card>
               <CardHeader>
-                <CardTitle>타입별 분포</CardTitle>
+                <CardTitle>Top 3 콘텐츠 타입</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-80 flex items-center justify-center text-muted-foreground">
-                  차트 영역 (Phase 4C)
+                <div className="space-y-4">
+                  {top3Types.map((type, index) => (
+                    <div key={type.code} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <div className="font-medium">{type.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {type.count.toLocaleString()}개
+                          </div>
+                        </div>
+                      </div>
+                      <Badge variant="secondary">{type.code}</Badge>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* 차트 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RegionChart data={regionStats} />
+            <TypeChart data={typeStats} />
           </div>
         </div>
       </div>
