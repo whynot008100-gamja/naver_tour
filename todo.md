@@ -515,14 +515,14 @@
     - [x] priority 속성 (above-the-fold)
     - [x] lazy loading (below-the-fold)
     - [x] responsive sizes 설정
-- [ ] B.전역 에러 핸들링
-  - [ ] `app/error.tsx` 생성
-  - [ ] `app/global-error.tsx` 생성
-  - [ ] API 에러 처리 개선
-- [ ] C.404 페이지
-  - [ ] `app/not-found.tsx` 생성
-    - [ ] 사용자 친화적인 메시지
-    - [ ] 홈으로 돌아가기 버튼
+- [x] B.전역 에러 핸들링
+  - [x] `app/error.tsx` 생성
+  - [x] `app/global-error.tsx` 생성
+  - [x] API 에러 처리 개선
+- [x] C.404 페이지
+  - [x] `app/not-found.tsx` 생성
+    - [x] 사용자 친화적인 메시지
+    - [x] 홈으로 돌아가기 버튼
 - [ ] D.SEO 최적화
   - [ ] 메타태그 설정 (`app/layout.tsx`)
     - [ ] 기본 title, description
