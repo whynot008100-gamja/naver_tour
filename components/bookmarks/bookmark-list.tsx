@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useClerkSupabaseClient } from '@/lib/supabase/clerk-client';
 import { getUserBookmarks } from '@/lib/api/supabase-api';
 import { getDetailCommon } from '@/lib/api/tour-api';
 import { Card, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TourCard } from '@/components/tour-card';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface BookmarkListProps {
   userId: string;
@@ -23,6 +25,7 @@ export function BookmarkList({ userId }: BookmarkListProps) {
   const supabase = useClerkSupabaseClient();
   const [bookmarks, setBookmarks] = useState<BookmarkWithDetail[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('latest');
 
   useEffect(() => {
     async function fetchBookmarks() {
@@ -69,6 +72,44 @@ export function BookmarkList({ userId }: BookmarkListProps) {
     fetchBookmarks();
   }, [userId, supabase]);
 
+  const handleRemove = async (bookmarkId: string) => {
+    try {
+      const { error } = await supabase
+        .from('bookmarks')
+        .delete()
+        .eq('id', bookmarkId);
+
+      if (error) throw error;
+
+      // 로컬 상태 업데이트
+      setBookmarks(bookmarks.filter(b => b.id !== bookmarkId));
+    } catch (error) {
+      console.error('북마크 삭제 실패:', error);
+      alert('북마크 삭제에 실패했습니다.');
+    }
+  };
+
+  const sortedBookmarks = useMemo(() => {
+    const sorted = [...bookmarks];
+    
+    switch (sortBy) {
+      case 'latest':
+        return sorted.sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      case 'oldest':
+        return sorted.sort((a, b) => 
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+      case 'name':
+        return sorted.sort((a, b) => 
+          (a.detail?.title || '').localeCompare(b.detail?.title || '')
+        );
+      default:
+        return sorted;
+    }
+  }, [bookmarks, sortBy]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -93,17 +134,44 @@ export function BookmarkList({ userId }: BookmarkListProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {bookmarks.map((bookmark) => {
-        if (!bookmark.detail) return null;
-        
-        return (
-          <TourCard
-            key={bookmark.id}
-            item={bookmark.detail}
-          />
-        );
-      })}
-    </div>
+    <>
+      {/* 정렬 드롭다운 */}
+      <div className="flex justify-between items-center mb-6">
+        <p className="text-sm text-muted-foreground">
+          총 {bookmarks.length}개의 북마크
+        </p>
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="latest">최신순</SelectItem>
+            <SelectItem value="oldest">오래된순</SelectItem>
+            <SelectItem value="name">이름순</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* 북마크 목록 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sortedBookmarks.map((bookmark) => {
+          if (!bookmark.detail) return null;
+          
+          return (
+            <div key={bookmark.id} className="relative group">
+              <TourCard item={bookmark.detail} />
+              <Button
+                variant="destructive"
+                size="icon"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => handleRemove(bookmark.id)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
