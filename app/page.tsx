@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { TourList } from '@/components/tour-list';
 import { TourFilters } from '@/components/tour-filters';
+import { TourSearch } from '@/components/tour-search';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'list' | 'map'>('list');
@@ -45,6 +46,9 @@ export default function HomePage() {
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">관광지 목록</h1>
             <div className="space-y-4">
+              {/* 검색 */}
+              <TourSearch />
+              
               {/* 필터 */}
               <TourFilters />
               

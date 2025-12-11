@@ -325,32 +325,39 @@ export async function getAreaBasedList(
  * 키워드로 관광지를 검색합니다.
  *
  * @param params - 검색 파라미터
- * @returns 검색 결과 목록
+ * @returns 검색 결과 목록 및 총 개수
  *
  * @example
  * ```typescript
  * // '서울'로 검색
- * const results = await searchKeyword({
+ * const result = await searchKeyword({
  *   keyword: '서울',
  *   contentTypeId: '12',
  *   numOfRows: 10,
  * });
+ * console.log(result.items); // 검색 결과
+ * console.log(result.totalCount); // 전체 개수
  * ```
  */
 export async function searchKeyword(
   params: SearchKeywordParams,
-): Promise<any[]> {
+): Promise<{ items: any[]; totalCount: number }> {
   if (!params.keyword || params.keyword.trim() === "") {
     throw new Error("검색 키워드를 입력하세요.");
   }
 
-  return fetchTourApi("/searchKeyword2", {
+  const items = await fetchTourApi("/searchKeyword2", {
     keyword: params.keyword,
     areaCode: params.areaCode,
     contentTypeId: params.contentTypeId,
     numOfRows: params.numOfRows || 10,
     pageNo: params.pageNo || 1,
   });
+  
+  return {
+    items,
+    totalCount: items.length,
+  };
 }
 
 /**

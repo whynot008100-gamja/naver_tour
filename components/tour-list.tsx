@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { TourCard } from './tour-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { getAreaBasedList } from '@/lib/api/tour-api';
+import { getAreaBasedList, searchKeyword } from '@/lib/api/tour-api';
 import type { TourItem } from '@/lib/types/tour';
 import { AlertCircle } from 'lucide-react';
 
@@ -16,25 +16,41 @@ export function TourList() {
   const [error, setError] = useState<string | null>(null);
   
   // URL 쿼리 파라미터에서 필터 값 가져오기
+  const keyword = searchParams.get('keyword') || undefined;
   const areaCode = searchParams.get('areaCode') || undefined;
   const contentTypeId = searchParams.get('contentTypeId') || undefined;
   const sort = searchParams.get('sort') || 'A';
 
   useEffect(() => {
     fetchTours();
-  }, [areaCode, contentTypeId, sort]); // 필터 변경 시 재호출
+  }, [keyword, areaCode, contentTypeId, sort]); // 검색어 및 필터 변경 시 재호출
 
   const fetchTours = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getAreaBasedList({
-        areaCode,
-        contentTypeId,
-        arrange: sort as 'A' | 'C',
-        numOfRows: 12,
-        pageNo: 1,
-      });
+      
+      let data;
+      if (keyword) {
+        // 검색 API 사용
+        data = await searchKeyword({
+          keyword,
+          areaCode,
+          contentTypeId,
+          numOfRows: 12,
+          pageNo: 1,
+        });
+      } else {
+        // 필터 API 사용
+        data = await getAreaBasedList({
+          areaCode,
+          contentTypeId,
+          arrange: sort as 'A' | 'C',
+          numOfRows: 12,
+          pageNo: 1,
+        });
+      }
+      
       setTours(data.items);
     } catch (err) {
       console.error('관광지 목록 조회 실패:', err);
