@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,6 +66,8 @@ const Navbar = () => {
               북마크
             </Link>
           </SignedIn>
+          
+          <ThemeToggle />
           
           <SignedOut>
             <SignInButton mode="modal">

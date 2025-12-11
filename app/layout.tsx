@@ -6,6 +6,8 @@ import Script from "next/script";
 
 import Navbar from "@/components/Navbar";
 import { SyncUserProvider } from "@/components/providers/sync-user-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { WebVitals } from "./web-vitals";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -74,10 +76,13 @@ export default function RootLayout({
             strategy="beforeInteractive"
             src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${naverMapClientId}`}
           />
-          <SyncUserProvider>
-            <Navbar />
-          {children}
-          </SyncUserProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <SyncUserProvider>
+              <Navbar />
+              {children}
+            </SyncUserProvider>
+          </ThemeProvider>
+          <WebVitals />
         </body>
       </html>
     </ClerkProvider>
