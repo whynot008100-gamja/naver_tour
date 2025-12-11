@@ -331,7 +331,6 @@
     - [x] 개요 (긴 설명문)
     - [x] 관광 타입 및 카테고리 뱃지
     - [x] 정보 없는 항목 숨김 처리
-<<<<<<< HEAD
 - [x] C.운영 정보 섹션 (MVP 2.4.2)
   - [x] `components/tour-detail/detail-intro.tsx` 생성
     - [x] `getDetailIntro()` API 연동
@@ -351,35 +350,14 @@
     - [x] 이미지 클릭 시 전체화면 모달
     - [x] 이미지 없으면 기본 이미지
     - [x] Next.js Image 컴포넌트 사용 (최적화)
-=======
-- [ ] C운영 정보 섹션 (MVP 2.4.2)
-  - [ ] `components/tour-detail/detail-intro.tsx` 생성
-    - [ ] `getDetailIntro()` API 연동
-    - [ ] 운영시간/개장시간
-    - [ ] 휴무일
-    - [ ] 이용요금
-    - [ ] 주차 가능 여부
-    - [ ] 수용인원
-    - [ ] 체험 프로그램
-    - [ ] 유모차/반려동물 동반 가능 여부
-    - [ ] 정보 없는 항목 숨김 처리
-- [ ] D.이미지 갤러리 (MVP 2.4.3)
-  - [ ] `components/tour-detail/detail-gallery.tsx` 생성
-    - [ ] `getDetailImage()` API 연동
-    - [ ] 대표 이미지 + 서브 이미지들
-    - [ ] 이미지 슬라이드 기능 (Swiper 또는 캐러셀)
-    - [ ] 이미지 클릭 시 전체화면 모달
-    - [ ] 이미지 없으면 기본 이미지
-    - [ ] Next.js Image 컴포넌트 사용 (최적화)
->>>>>>> 03ae5985ceb9f5e08f04b20b3e4e98e302a2224a
-- [ ] E.지도 섹션 (MVP 2.4.4)
-  - [ ] `components/tour-detail/detail-map.tsx` 생성
-    - [ ] 해당 관광지 위치 표시
-    - [ ] 마커 1개 표시
-    - [ ] "길찾기" 버튼
-      - [ ] 네이버 지도 앱/웹 연동
-      - [ ] URL: `https://map.naver.com/v5/directions/{좌표}`
-    - [ ] 좌표 정보 표시 (선택 사항)
+- [x] E.지도 섹션 (MVP 2.4.4)
+  - [x] `components/tour-detail/detail-map.tsx` 생성
+    - [x] 해당 관광지 위치 표시
+    - [x] 마커 1개 표시
+    - [x] "길찾기" 버튼
+      - [x] 네이버 지도 앱/웹 연동
+      - [x] URL: `https://map.naver.com/v5/directions/{좌표}`
+    - [x] 좌표 정보 표시 (선택 사항)
 - [ ] F.공유 기능 (MVP 2.4.5)
   - [ ] `components/tour-detail/share-button.tsx` 생성
     - [ ] URL 복사 기능

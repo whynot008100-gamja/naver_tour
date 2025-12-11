@@ -8,6 +8,7 @@ import { InfoRow } from '@/components/tour-detail/info-row';
 import { CopyButton } from '@/components/tour-detail/copy-button';
 import { OperatingInfo } from '@/components/tour-detail/operating-info';
 import { ImageGallery } from '@/components/tour-detail/image-gallery';
+import { DetailMap } from '@/components/tour-detail/detail-map';
 import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 import {
   MapPin,
@@ -146,6 +147,15 @@ export default async function PlaceDetailPage({
             
             {/* 이미지 갤러리 */}
             <ImageGallery contentId={contentid} />
+            
+            {/* 지도 */}
+            {detail.mapx && detail.mapy && (
+              <DetailMap 
+                title={detail.title}
+                mapx={detail.mapx}
+                mapy={detail.mapy}
+              />
+            )}
           </div>
         </div>
       </main>
