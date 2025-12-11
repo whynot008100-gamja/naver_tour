@@ -159,7 +159,7 @@ export function BookmarkList({ userId }: BookmarkListProps) {
           
           return (
             <div key={bookmark.id} className="relative group">
-              <TourCard item={bookmark.detail} />
+              <TourCard tour={bookmark.detail} />
               <Button
                 variant="destructive"
                 size="icon"
