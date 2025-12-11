@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import { SyncUserProvider } from "@/components/providers/sync-user-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { WebVitals } from "./web-vitals";
+import { FeedbackButton } from "@/components/feedback-button";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -81,6 +82,7 @@ export default function RootLayout({
               <Navbar />
               {children}
             </SyncUserProvider>
+            <FeedbackButton />
           </ThemeProvider>
           <WebVitals />
         </body>
