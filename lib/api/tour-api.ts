@@ -289,29 +289,36 @@ export async function getAreaCode(params: AreaCodeParams = {}): Promise<any[]> {
  * 지역 기반 관광지 목록을 조회합니다.
  *
  * @param params - 조회 파라미터
- * @returns 관광지 목록
+ * @returns 관광지 목록 및 총 개수
  *
  * @example
  * ```typescript
  * // 서울의 관광지 조회
- * const tourList = await getAreaBasedList({
+ * const result = await getAreaBasedList({
  *   areaCode: '1',
  *   contentTypeId: '12',
  *   numOfRows: 10,
  *   pageNo: 1,
  * });
+ * console.log(result.items); // 관광지 목록
+ * console.log(result.totalCount); // 전체 개수
  * ```
  */
 export async function getAreaBasedList(
   params: AreaBasedListParams,
-): Promise<any[]> {
-  return fetchTourApi("/areaBasedList2", {
+): Promise<{ items: any[]; totalCount: number }> {
+  const items = await fetchTourApi("/areaBasedList2", {
     areaCode: params.areaCode,
     contentTypeId: params.contentTypeId,
     numOfRows: params.numOfRows || 10,
     pageNo: params.pageNo || 1,
     arrange: params.arrange || "A",
   });
+  
+  return {
+    items,
+    totalCount: items.length, // API가 totalCount를 반환하지 않으므로 items 길이 사용
+  };
 }
 
 /**

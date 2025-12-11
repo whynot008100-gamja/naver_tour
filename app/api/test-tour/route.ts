@@ -33,12 +33,12 @@ export async function GET() {
     
     // 2. 관광지 목록 조회 테스트 (서울의 관광지)
     console.log('2️⃣ 관광지 목록 조회 테스트 (서울)...');
-    const tourList = await getAreaBasedList({
+    const tourListResult = await getAreaBasedList({
       areaCode: '1', // 서울
       contentTypeId: '12', // 관광지
       numOfRows: 5,
     });
-    console.log(`✅ 관광지 ${tourList.length}개 조회 성공`);
+    console.log(`✅ 관광지 ${tourListResult.items.length}개 조회 성공`);
     
     // 3. 키워드 검색 테스트
     console.log('3️⃣ 키워드 검색 테스트 (경복궁)...');
@@ -49,8 +49,8 @@ export async function GET() {
     console.log(`✅ 검색 결과 ${searchResults.length}개 조회 성공`);
     
     // 4. 상세 정보 조회 테스트 (첫 번째 관광지)
-    if (tourList.length > 0) {
-      const firstTour = tourList[0];
+    if (tourListResult.items.length > 0) {
+      const firstTour = tourListResult.items[0];
       const contentId = firstTour.contentid;
       const contentTypeId = firstTour.contenttypeid;
       
@@ -89,8 +89,8 @@ export async function GET() {
           sample: areaCodes.slice(0, 2),
         },
         tourList: {
-          count: tourList.length,
-          sample: tourList.slice(0, 2),
+          count: tourListResult.items.length,
+          sample: tourListResult.items.slice(0, 2),
         },
         searchResults: {
           count: searchResults.length,

@@ -165,24 +165,71 @@
       - [x] 모바일 탭 전환 동작 확인
       - [x] 브레이크포인트 테스트
 
-- [ ] B.관광지 목록 기능 (MVP 2.1)
-  - [ ] `components/tour-card.tsx` 생성
-    - [ ] 썸네일 이미지 (기본 이미지 fallback)
-    - [ ] 관광지명
-    - [ ] 주소 표시
-    - [ ] 관광 타입 뱃지
-    - [ ] 간단한 개요 (1-2줄)
-    - [ ] 호버 효과 (scale, shadow)
-    - [ ] 클릭 시 상세페이지 이동
-  - [ ] `components/tour-list.tsx` 생성
-    - [ ] 그리드 레이아웃 (반응형)
-    - [ ] 카드 목록 표시
-    - [ ] 로딩 상태 (Skeleton UI)
-    - [ ] 빈 상태 처리
-  - [ ] API 연동
-    - [ ] `getAreaBasedList()` 호출
-    - [ ] 데이터 파싱 및 표시
-    - [ ] 에러 처리
+- [x] B. 관광지 목록 기능 (MVP 2.1)
+
+  **구현할 주요 컴포넌트/기능:**
+
+  - `components/tour-card.tsx` 생성 (관광지 카드 컴포넌트)
+    - 썸네일 이미지 (firstimage 또는 기본 이미지)
+    - 관광지명, 주소, 관광 타입 뱃지
+    - 호버 효과 (scale, shadow)
+    - 클릭 시 상세페이지 이동
+  - `components/tour-list.tsx` 생성 (목록 컴포넌트)
+    - 반응형 그리드 레이아웃 (모바일 1열, 태블릿 2열, 데스크톱 2-3열)
+    - 로딩 상태 (Skeleton UI)
+    - 빈 상태 처리
+    - 에러 상태 처리
+  - API 연동
+    - `getAreaBasedList()` 호출 (페이지당 12개)
+    - 에러 처리 및 재시도
+
+  **특별히 주의할 요구사항:**
+
+  - 이미지 처리: `firstimage` 없을 수 있음 → 기본 이미지 사용
+  - `next.config.ts`에 외부 도메인 추가 (`tong.visitkorea.or.kr`)
+  - 관광 타입 매핑 (12: 관광지, 14: 문화시설, 15: 축제/행사 등)
+  - Next.js Image 컴포넌트 사용 (최적화)
+  - 이미지 lazy loading
+  - 주소 말줄임표 처리 (너무 긴 경우)
+  - API Rate Limit 고려
+  - 응답 시간 느릴 수 있음 → 타임아웃 설정
+
+  - [x] `components/tour-card.tsx` 생성
+    - [x] 썸네일 이미지 (기본 이미지 fallback)
+    - [x] 관광지명
+    - [x] 주소 표시
+    - [x] 관광 타입 뱃지
+    - [x] 호버 효과 (scale, shadow)
+    - [x] 클릭 시 상세페이지 이동 (`/places/[contentId]`)
+    - [x] Next.js Image 컴포넌트 사용
+  - [x] `components/tour-list.tsx` 생성
+    - [x] 그리드 레이아웃 (반응형)
+      - [x] 모바일: 1열
+      - [x] 태블릿: 2열
+      - [x] 데스크톱: 2-3열
+    - [x] 카드 목록 표시
+    - [x] 로딩 상태 (Skeleton UI)
+    - [x] 빈 상태 처리 ("관광지가 없습니다")
+    - [x] 에러 상태 처리 (재시도 버튼)
+  - [x] API 연동
+    - [x] `getAreaBasedList()` 호출
+    - [x] 초기 데이터: 전국 관광지 (areaCode 없음)
+    - [x] 페이지당 12개 항목
+    - [x] 데이터 파싱 및 표시
+    - [x] 에러 처리
+  - [x] 기본 이미지 준비
+    - [x] `public/images/placeholder-tour.jpg` 생성
+  - [x] `next.config.ts` 업데이트
+    - [x] 외부 이미지 도메인 추가 (`tong.visitkorea.or.kr`, http/https)
+  - [x] `app/page.tsx` 업데이트
+    - [x] 플레이스홀더를 `TourList` 컴포넌트로 교체
+  - [x] 테스트
+    - [x] 브라우저에서 관광지 목록 표시 확인
+    - [x] 로딩 상태 확인
+    - [x] 에러 처리 확인
+    - [x] 카드 호버 효과 확인
+    - [x] 반응형 그리드 확인
+
 - [ ] C.필터 기능
   - [ ] `components/tour-filters.tsx` 생성
     - [ ] 지역 필터 (시/도 선택)
