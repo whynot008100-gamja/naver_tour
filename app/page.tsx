@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { TourList } from '@/components/tour-list';
 import { TourFilters } from '@/components/tour-filters';
 import { TourSearch } from '@/components/tour-search';
+import { NaverMap } from '@/components/naver-map';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'list' | 'map'>('list');
@@ -64,16 +65,7 @@ export default function HomePage() {
             activeTab === 'map' ? 'block' : 'hidden'
           } lg:block`}
         >
-          <div className="h-full flex items-center justify-center p-6">
-            <div className="text-center">
-              <p className="text-muted-foreground text-lg">
-                네이버 지도가 여기 표시됩니다.
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                (Phase 2의 네이버 지도 연동에서 구현 예정)
-              </p>
-            </div>
-          </div>
+          <NaverMap />
         </div>
       </div>
     </main>
