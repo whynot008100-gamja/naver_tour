@@ -19,8 +19,39 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My Trip - 한국 관광지 정보 서비스",
-  description: "한국관광공사 API를 활용한 전국 관광지 검색 및 정보 제공 서비스",
+  title: {
+    default: "My Trip - 한국 관광지 정보 서비스",
+    template: "%s | My Trip",
+  },
+  description: "한국관광공사 API를 활용한 전국 관광지 검색 및 정보 제공 서비스. 관광지, 맛집, 숙소 정보를 한눈에!",
+  keywords: ["한국 관광", "관광지", "여행", "맛집", "숙소", "한국관광공사"],
+  authors: [{ name: "My Trip" }],
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: "https://naver-tour.vercel.app",
+    siteName: "My Trip",
+    title: "My Trip - 한국 관광지 정보 서비스",
+    description: "한국관광공사 API를 활용한 전국 관광지 검색 및 정보 제공 서비스",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "My Trip",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "My Trip - 한국 관광지 정보 서비스",
+    description: "한국관광공사 API를 활용한 전국 관광지 검색 및 정보 제공 서비스",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
