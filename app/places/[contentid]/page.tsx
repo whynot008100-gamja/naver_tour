@@ -13,6 +13,7 @@ import { DetailMap } from '@/components/tour-detail/detail-map';
 import { ShareButton } from '@/components/tour-detail/share-button';
 import { BookmarkButton } from '@/components/tour-detail/bookmark-button';
 import { PetTourInfo } from '@/components/tour-detail/pet-tour-info';
+import { RecommendedPlaces } from '@/components/tour-detail/recommended-places';
 import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 import {
   MapPin,
@@ -223,6 +224,13 @@ export default async function PlaceDetailPage({
             
             {/* 반려동물 정보 */}
             <PetTourInfo contentId={contentid} />
+            
+            {/* 추천 관광지 */}
+            <RecommendedPlaces 
+              currentContentId={contentid}
+              areaCode={detail.areacode}
+              contentTypeId={detail.contenttypeid}
+            />
           </div>
         </div>
       </main>
