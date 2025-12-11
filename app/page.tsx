@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { TourList } from '@/components/tour-list';
 import { TourFilters } from '@/components/tour-filters';
@@ -48,13 +48,19 @@ export default function HomePage() {
             <h1 className="text-2xl font-bold mb-4">관광지 목록</h1>
             <div className="space-y-4">
               {/* 검색 */}
-              <TourSearch />
+              <Suspense fallback={<div>로딩 중...</div>}>
+                <TourSearch />
+              </Suspense>
               
               {/* 필터 */}
-              <TourFilters />
+              <Suspense fallback={<div>로딩 중...</div>}>
+                <TourFilters />
+              </Suspense>
               
               {/* 관광지 목록 */}
-              <TourList />
+              <Suspense fallback={<div>로딩 중...</div>}>
+                <TourList />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -65,7 +71,9 @@ export default function HomePage() {
             activeTab === 'map' ? 'block' : 'hidden'
           } lg:block`}
         >
-          <NaverMap />
+          <Suspense fallback={<div className="flex items-center justify-center h-full">지도 로딩 중...</div>}>
+            <NaverMap />
+          </Suspense>
         </div>
       </div>
     </main>

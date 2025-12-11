@@ -46,7 +46,7 @@ export async function GET() {
       keyword: '경복궁',
       numOfRows: 3,
     });
-    console.log(`✅ 검색 결과 ${searchResults.length}개 조회 성공`);
+    console.log(`✅ 검색 결과 ${searchResults.items.length}개 조회 성공`);
     
     // 4. 상세 정보 조회 테스트 (첫 번째 관광지)
     if (tourListResult.items.length > 0) {
@@ -93,8 +93,8 @@ export async function GET() {
           sample: tourListResult.items.slice(0, 2),
         },
         searchResults: {
-          count: searchResults.length,
-          sample: searchResults.slice(0, 2),
+          count: searchResults.items.length,
+          sample: searchResults.items.slice(0, 2),
         },
       },
     });
