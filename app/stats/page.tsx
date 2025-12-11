@@ -1,7 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, MapPin, Users, TrendingUp } from 'lucide-react';
+import { getStatsSummary } from '@/lib/api/stats-api';
 
-export default function StatsPage() {
+export const revalidate = 3600; // 1시간마다 재검증
+
+export default async function StatsPage() {
+  // 통계 데이터 조회
+  const summary = await getStatsSummary();
+
   return (
     <main className="min-h-screen bg-background">
       {/* 헤더 */}
@@ -32,7 +38,9 @@ export default function StatsPage() {
                 <MapPin className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">-</div>
+                <div className="text-2xl font-bold">
+                  {summary.totalCount.toLocaleString()}
+                </div>
                 <p className="text-xs text-muted-foreground">
                   전국 관광지 수
                 </p>
@@ -47,7 +55,7 @@ export default function StatsPage() {
                 <MapPin className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">17</div>
+                <div className="text-2xl font-bold">{summary.regionCount}</div>
                 <p className="text-xs text-muted-foreground">
                   시도 단위
                 </p>
@@ -62,7 +70,7 @@ export default function StatsPage() {
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">7</div>
+                <div className="text-2xl font-bold">{summary.typeCount}</div>
                 <p className="text-xs text-muted-foreground">
                   관광지, 음식점 등
                 </p>
@@ -85,7 +93,7 @@ export default function StatsPage() {
             </Card>
           </div>
 
-          {/* 차트 영역 (Phase 4B-4D에서 구현) */}
+          {/* 차트 영역 (Phase 4C-4D에서 구현) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -93,7 +101,7 @@ export default function StatsPage() {
               </CardHeader>
               <CardContent>
                 <div className="h-80 flex items-center justify-center text-muted-foreground">
-                  차트 영역 (Phase 4B)
+                  차트 영역 (Phase 4C)
                 </div>
               </CardContent>
             </Card>
