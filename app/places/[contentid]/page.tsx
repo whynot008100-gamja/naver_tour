@@ -11,6 +11,7 @@ import { OperatingInfo } from '@/components/tour-detail/operating-info';
 import { ImageGallery } from '@/components/tour-detail/image-gallery';
 import { DetailMap } from '@/components/tour-detail/detail-map';
 import { ShareButton } from '@/components/tour-detail/share-button';
+import { BookmarkButton } from '@/components/tour-detail/bookmark-button';
 import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 import {
   MapPin,
@@ -126,7 +127,7 @@ export default async function PlaceDetailPage({
               </div>
             )}
             
-            {/* 제목 + 뱃지 + 공유 버튼 */}
+            {/* 제목 + 뱃지 + 공유/북마크 버튼 */}
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 space-y-3">
@@ -135,7 +136,10 @@ export default async function PlaceDetailPage({
                   </Badge>
                   <h1 className="text-3xl font-bold">{detail.title}</h1>
                 </div>
-                <ShareButton title={detail.title} />
+                <div className="flex gap-2">
+                  <ShareButton title={detail.title} />
+                  <BookmarkButton contentId={contentid} />
+                </div>
               </div>
             </div>
             
