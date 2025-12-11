@@ -42,7 +42,7 @@ export function TourSearch() {
     <div className="relative">
       <Input
         type="text"
-        placeholder="관광지 검색..."
+        placeholder="search"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={handleKeyPress}

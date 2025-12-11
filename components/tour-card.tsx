@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import type { TourItem } from '@/lib/types/tour';
 import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 
@@ -15,33 +16,43 @@ export function TourCard({ tour, priority = false }: TourCardProps) {
   
   return (
     <Link href={`/places/${tour.contentid}`} className="block">
-      <Card className="overflow-hidden hover:scale-[1.02] hover:shadow-lg transition-all duration-200 cursor-pointer h-full">
-        <CardContent className="p-0">
-          {/* 이미지 */}
-          <div className="relative w-full h-48 bg-muted">
+      <Card className="overflow-hidden hover:bg-accent/50 transition-all duration-200 cursor-pointer h-full border-none shadow-sm bg-card/50">
+        <div className="flex flex-row h-32 md:h-40">
+          {/* 이미지 (왼쪽) */}
+          <div className="relative w-32 md:w-48 shrink-0 bg-muted">
             <Image
               src={tour.firstimage || '/images/placeholder-tour.jpg'}
               alt={tour.title}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 768px) 128px, 192px"
               priority={priority}
             />
           </div>
           
-          {/* 정보 */}
-          <div className="p-4 space-y-2">
-            <Badge variant="secondary" className="mb-2">
-              {contentTypeName}
-            </Badge>
-            <h3 className="font-bold text-lg line-clamp-1">
-              {tour.title}
-            </h3>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {tour.addr1}
-            </p>
+          {/* 정보 (오른쪽) */}
+          <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
+            <div className="space-y-1">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="font-bold text-lg line-clamp-1">
+                  {tour.title}
+                </h3>
+                <Badge variant="secondary" className="shrink-0 text-xs">
+                  {contentTypeName}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground line-clamp-2">
+                {tour.addr1}
+              </p>
+            </div>
+            
+            <div className="flex justify-end">
+              <Button size="sm" variant="secondary" className="h-7 text-xs">
+                View Details
+              </Button>
+            </div>
           </div>
-        </CardContent>
+        </div>
       </Card>
     </Link>
   );

@@ -99,7 +99,7 @@ export function TourList() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-1 gap-4">
         {tours.map((tour, index) => (
           <TourCard 
             key={tour.contentid} 
@@ -186,7 +186,7 @@ export function TourList() {
 
 function LoadingSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
+    <div className="grid grid-cols-1 gap-4">
       {Array.from({ length: 12 }).map((_, index) => (
         <div key={index} className="space-y-3">
           <Skeleton className="h-48 w-full rounded-lg" />

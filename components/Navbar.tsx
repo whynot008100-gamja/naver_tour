@@ -27,22 +27,8 @@ const Navbar = () => {
           My Trip
         </Link>
 
-        {/* 검색창 (데스크톱) */}
-        <form 
-          onSubmit={handleSearch}
-          className="hidden md:flex items-center flex-1 max-w-md mx-4"
-        >
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="관광지 검색..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            />
-          </div>
-        </form>
+        {/* 검색창 (데스크톱) - 제거됨 */}
+        <div className="hidden md:flex flex-1 max-w-md mx-4" />
 
         {/* 네비게이션 링크 + 로그인 */}
         <nav className="flex items-center gap-4">
@@ -80,22 +66,7 @@ const Navbar = () => {
         </nav>
       </div>
 
-      {/* 검색창 (모바일) */}
-      <form 
-        onSubmit={handleSearch}
-        className="md:hidden px-4 pb-3"
-      >
-        <div className="relative w-full min-w-[300px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="관광지 검색..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-10 pr-4 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          />
-        </div>
-      </form>
+      {/* 검색창 (모바일) - 제거됨 */}
     </header>
   );
 };
