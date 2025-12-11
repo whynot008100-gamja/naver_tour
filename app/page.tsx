@@ -10,6 +10,7 @@ import { Sidebar } from '@/components/sidebar';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'list' | 'map'>('list');
+  const [activeContentId, setActiveContentId] = useState<string | null>(null);
 
   return (
     <main className="min-h-[calc(100vh-64px)] bg-background">
@@ -68,7 +69,7 @@ export default function HomePage() {
             </div>
 
             <Suspense fallback={<div>로딩 중...</div>}>
-              <TourList />
+              <TourList onActiveChange={setActiveContentId} />
             </Suspense>
           </div>
         </div>
@@ -83,7 +84,7 @@ export default function HomePage() {
         >
           <div className="w-full h-full">
             <Suspense fallback={<div className="flex items-center justify-center h-full">지도 로딩 중...</div>}>
-              <NaverMap />
+              <NaverMap activeContentId={activeContentId} />
             </Suspense>
           </div>
         </div>

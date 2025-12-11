@@ -1,12 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getAreaBasedList, searchKeyword } from '@/lib/api/tour-api';
 import type { TourItem } from '@/lib/types/tour';
 import { Loader2 } from 'lucide-react';
 
-export function NaverMap() {
+// 경복궁 좌표 (기본 위치)
+const GYEONGBOKGUNG = { lat: 37.5796, lng: 126.9770 };
+
+interface NaverMapProps {
+  activeContentId?: string | null;
+}
+
+export function NaverMap({ activeContentId }: NaverMapProps) {
   const searchParams = useSearchParams();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -33,7 +40,7 @@ export function NaverMap() {
             keyword,
             areaCode,
             contentTypeId,
-            numOfRows: 12,
+            numOfRows: 100,
             pageNo: currentPage,
           });
         } else {
@@ -41,7 +48,7 @@ export function NaverMap() {
             areaCode,
             contentTypeId,
             arrange: sort as 'A' | 'C',
-            numOfRows: 12,
+            numOfRows: 100,
             pageNo: currentPage,
           });
         }
@@ -56,12 +63,12 @@ export function NaverMap() {
     fetchTours();
   }, [keyword, areaCode, contentTypeId, sort, currentPage]);
 
-  // 지도 초기화
+  // 지도 초기화 (경복궁을 기본 위치로)
   useEffect(() => {
     if (!mapRef.current || !window.naver) return;
 
     const mapOptions = {
-      center: new window.naver.maps.LatLng(37.5665, 126.978),
+      center: new window.naver.maps.LatLng(GYEONGBOKGUNG.lat, GYEONGBOKGUNG.lng),
       zoom: 12,
       zoomControl: true,
       zoomControlOptions: {
@@ -73,7 +80,6 @@ export function NaverMap() {
     mapInstanceRef.current = map;
 
     return () => {
-      // cleanup
       if (infoWindowRef.current) {
         infoWindowRef.current.close();
       }
@@ -99,26 +105,46 @@ export function NaverMap() {
     const validTours = tours.filter(tour => tour.mapx && tour.mapy);
     
     validTours.forEach(tour => {
-      const lat = Number(tour.mapy) / 10000000;
-      const lng = Number(tour.mapx) / 10000000;
+      const lat = Number(tour.mapy);
+      const lng = Number(tour.mapx);
 
       // 유효한 좌표인지 확인
       if (isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) return;
+
+      const isActive = tour.contentid === activeContentId;
 
       const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(lat, lng),
         map: mapInstanceRef.current,
         title: tour.title,
+        icon: {
+          content: `
+            <div style="
+              padding: ${isActive ? '8px 16px' : '5px 10px'};
+              background: ${isActive ? '#2563eb' : 'white'};
+              color: ${isActive ? 'white' : 'black'};
+              border: ${isActive ? '2px solid white' : '1px solid #ccc'};
+              border-radius: 20px;
+              font-size: ${isActive ? '14px' : '12px'};
+              font-weight: bold;
+              box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+              white-space: nowrap;
+              transition: all 0.2s;
+            ">
+              ${tour.title}
+            </div>
+          `,
+          anchor: new window.naver.maps.Point(isActive ? 20 : 15, isActive ? 20 : 15),
+        },
+        zIndex: isActive ? 100 : 1,
       });
 
       // 마커 클릭 이벤트
       window.naver.maps.Event.addListener(marker, 'click', () => {
-        // 기존 인포윈도우 닫기
         if (infoWindowRef.current) {
           infoWindowRef.current.close();
         }
 
-        // 인포윈도우 생성 및 표시
         const infoWindow = new window.naver.maps.InfoWindow({
           content: `
             <div style="padding: 12px; min-width: 200px; max-width: 300px;">
@@ -137,24 +163,21 @@ export function NaverMap() {
         infoWindow.open(mapInstanceRef.current, marker);
         infoWindowRef.current = infoWindow;
 
-        // 지도 중심을 마커 위치로 이동
         mapInstanceRef.current.setCenter(new window.naver.maps.LatLng(lat, lng));
       });
 
       markersRef.current.push(marker);
     });
 
-    // 첫 번째 유효한 관광지로 중심 이동
-    if (validTours.length > 0) {
-      const firstTour = validTours[0];
-      const lat = Number(firstTour.mapy) / 10000000;
-      const lng = Number(firstTour.mapx) / 10000000;
-      mapInstanceRef.current.setCenter(new window.naver.maps.LatLng(lat, lng));
-    }
-  }, [tours]);
+    // 첫 번째 유효한 관광지로 중심 이동하지 않음 (경복궁 유지)
+    // 대신 지도 범위를 조정하려면 아래 주석 해제:
+    // if (validTours.length > 0 && bounds.hasArea && mapInstanceRef.current) {
+    //   mapInstanceRef.current.fitBounds(bounds);
+    // }
+  }, [tours, activeContentId]);
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full rounded-xl overflow-hidden shadow-sm border">
       <div 
         ref={mapRef} 
         className="w-full h-full"

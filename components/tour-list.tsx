@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { TourCard } from './tour-card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,7 +18,11 @@ import { getAreaBasedList, searchKeyword } from '@/lib/api/tour-api';
 import type { TourItem } from '@/lib/types/tour';
 import { AlertCircle, SearchX } from 'lucide-react';
 
-export function TourList() {
+interface TourListProps {
+  onActiveChange?: (contentId: string) => void;
+}
+
+export function TourList({ onActiveChange }: TourListProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [tours, setTours] = useState<TourItem[]>([]);
@@ -26,6 +30,10 @@ export function TourList() {
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   
+  // Intersection Observer Refs
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
   // URL 쿼리 파라미터에서 값 가져오기
   const keyword = searchParams.get('keyword') || undefined;
   const areaCode = searchParams.get('areaCode') || undefined;
@@ -39,6 +47,37 @@ export function TourList() {
   useEffect(() => {
     fetchTours();
   }, [keyword, areaCode, contentTypeId, sort, currentPage]);
+
+  // Intersection Observer 설정
+  useEffect(() => {
+    if (loading || tours.length === 0 || !onActiveChange) return;
+
+    const options = {
+      root: null, // viewport
+      rootMargin: '-40% 0px -40% 0px', // 화면 중앙 20% 영역만 감지
+      threshold: 0
+    };
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const contentId = entry.target.getAttribute('data-contentid');
+          if (contentId) {
+            onActiveChange(contentId);
+          }
+        }
+      });
+    }, options);
+
+    // 모든 카드 관찰 시작
+    Object.values(cardRefs.current).forEach((el) => {
+      if (el) observerRef.current?.observe(el);
+    });
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [tours, loading, onActiveChange]);
 
   const fetchTours = async () => {
     try {
@@ -101,11 +140,16 @@ export function TourList() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4">
         {tours.map((tour, index) => (
-          <TourCard 
-            key={tour.contentid} 
-            tour={tour} 
-            priority={index === 0}
-          />
+          <div 
+            key={tour.contentid}
+            data-contentid={tour.contentid}
+            ref={(el) => { cardRefs.current[tour.contentid] = el; }}
+          >
+            <TourCard 
+              tour={tour} 
+              priority={index === 0}
+            />
+          </div>
         ))}
       </div>
       

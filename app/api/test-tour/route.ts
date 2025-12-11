@@ -57,11 +57,11 @@ export async function GET() {
       console.log(`4️⃣ 상세 정보 조회 테스트 (contentId: ${contentId})...`);
       
       // 공통 정보
-      const detailCommon = await getDetailCommon(contentId);
+      const _detailCommon = await getDetailCommon(contentId);
       console.log(`✅ 공통 정보 조회 성공`);
       
       // 소개 정보
-      const detailIntro = await getDetailIntro(contentId, contentTypeId);
+      const _detailIntro = await getDetailIntro(contentId, contentTypeId);
       console.log(`✅ 소개 정보 조회 성공`);
       
       // 이미지 목록
@@ -72,7 +72,7 @@ export async function GET() {
       try {
         const petTourInfo = await getDetailPetTour(contentId);
         console.log(`✅ 반려동물 정보 조회 성공 (${petTourInfo.length}개)`);
-      } catch (error) {
+      } catch (_error) {
         console.log(`⚠️ 반려동물 정보 없음 (정상)`);
       }
     }
