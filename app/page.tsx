@@ -42,7 +42,9 @@ export default function HomePage() {
         
         {/* 1. 사이드바 (검색/필터) - 데스크톱 전용 */}
         <div className="hidden lg:block border-r bg-background h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden">
-          <Sidebar />
+          <Suspense fallback={<div className="p-6">로딩 중...</div>}>
+            <Sidebar />
+          </Suspense>
         </div>
 
         {/* 2. 중앙 영역 (관광지 목록) */}
