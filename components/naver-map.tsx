@@ -22,8 +22,8 @@ export function NaverMap({ activeContentId }: NaverMapProps) {
   const [tours, setTours] = useState<TourItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // URL 쿼리 파라미터에서 필터 값 가져오기
-  const keyword = searchParams.get('keyword') || undefined;
+  // URL 쿼리 파라미터에서 필터 값 가져오기 (기본값: 경복궁)
+  const keyword = searchParams.get('keyword') || '경복궁';
   const areaCode = searchParams.get('areaCode') || undefined;
   const contentTypeId = searchParams.get('contentTypeId') || undefined;
   const sort = searchParams.get('sort') || 'A';
@@ -120,21 +120,26 @@ export function NaverMap({ activeContentId }: NaverMapProps) {
         icon: {
           content: `
             <div style="
-              padding: ${isActive ? '8px 16px' : '5px 10px'};
-              background: ${isActive ? '#2563eb' : 'white'};
-              color: ${isActive ? 'white' : 'black'};
-              border: ${isActive ? '2px solid white' : '1px solid #ccc'};
-              border-radius: 20px;
-              font-size: ${isActive ? '14px' : '12px'};
-              font-weight: bold;
-              box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-              white-space: nowrap;
+              width: ${isActive ? '32px' : '24px'};
+              height: ${isActive ? '32px' : '24px'};
+              display: flex;
+              align-items: center;
+              justify-content: center;
               transition: all 0.2s;
             ">
-              ${tour.title}
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 24 24" 
+                fill="${isActive ? '#2563eb' : '#ef4444'}"
+                width="${isActive ? '32' : '24'}"
+                height="${isActive ? '32' : '24'}"
+                style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"
+              >
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
             </div>
           `,
-          anchor: new window.naver.maps.Point(isActive ? 20 : 15, isActive ? 20 : 15),
+          anchor: new window.naver.maps.Point(isActive ? 16 : 12, isActive ? 32 : 24),
         },
         zIndex: isActive ? 100 : 1,
       });

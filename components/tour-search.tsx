@@ -9,7 +9,7 @@ import { Search, X } from 'lucide-react';
 export function TourSearch() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('keyword') || '경복궁');
   
   // URL에서 keyword 읽기
   useEffect(() => {

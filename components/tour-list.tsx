@@ -34,8 +34,8 @@ export function TourList({ onActiveChange }: TourListProps) {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-  // URL 쿼리 파라미터에서 값 가져오기
-  const keyword = searchParams.get('keyword') || undefined;
+  // URL 쿼리 파라미터에서 값 가져오기 (기본값: 경복궁)
+  const keyword = searchParams.get('keyword') || '경복궁';
   const areaCode = searchParams.get('areaCode') || undefined;
   const contentTypeId = searchParams.get('contentTypeId') || undefined;
   const sort = searchParams.get('sort') || 'A';
