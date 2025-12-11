@@ -12,6 +12,7 @@ import { ImageGallery } from '@/components/tour-detail/image-gallery';
 import { DetailMap } from '@/components/tour-detail/detail-map';
 import { ShareButton } from '@/components/tour-detail/share-button';
 import { BookmarkButton } from '@/components/tour-detail/bookmark-button';
+import { PetTourInfo } from '@/components/tour-detail/pet-tour-info';
 import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 import {
   MapPin,
@@ -219,6 +220,9 @@ export default async function PlaceDetailPage({
                 mapy={detail.mapy}
               />
             )}
+            
+            {/* 반려동물 정보 */}
+            <PetTourInfo contentId={contentid} />
           </div>
         </div>
       </main>
