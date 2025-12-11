@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getAreaBasedList, searchKeyword } from '@/lib/api/tour-api';
 import type { TourItem } from '@/lib/types/tour';
+import { Loader2 } from 'lucide-react';
 
 export function NaverMap() {
   const searchParams = useSearchParams();
@@ -12,6 +13,7 @@ export function NaverMap() {
   const markersRef = useRef<any[]>([]);
   const infoWindowRef = useRef<any>(null);
   const [tours, setTours] = useState<TourItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // URL 쿼리 파라미터에서 필터 값 가져오기
   const keyword = searchParams.get('keyword') || undefined;
@@ -24,6 +26,7 @@ export function NaverMap() {
   useEffect(() => {
     const fetchTours = async () => {
       try {
+        setIsLoading(true);
         let data;
         if (keyword) {
           data = await searchKeyword({
@@ -45,6 +48,8 @@ export function NaverMap() {
         setTours(data.items);
       } catch (err) {
         console.error('관광지 목록 조회 실패:', err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -149,9 +154,21 @@ export function NaverMap() {
   }, [tours]);
 
   return (
-    <div 
-      ref={mapRef} 
-      className="w-full h-full"
-    />
+    <div className="relative w-full h-full">
+      <div 
+        ref={mapRef} 
+        className="w-full h-full"
+      />
+      
+      {/* 로딩 오버레이 */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10">
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">지도 로딩 중...</p>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

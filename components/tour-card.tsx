@@ -7,9 +7,10 @@ import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 
 interface TourCardProps {
   tour: TourItem;
+  priority?: boolean;
 }
 
-export function TourCard({ tour }: TourCardProps) {
+export function TourCard({ tour, priority = false }: TourCardProps) {
   const contentTypeName = CONTENT_TYPE_NAMES[tour.contenttypeid as keyof typeof CONTENT_TYPE_NAMES] || '기타';
   
   return (
@@ -24,6 +25,7 @@ export function TourCard({ tour }: TourCardProps) {
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority={priority}
             />
           </div>
           

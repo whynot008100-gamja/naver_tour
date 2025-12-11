@@ -85,9 +85,20 @@ function getApiKey(): string {
     process.env.TOUR_API_KEY || process.env.NEXT_PUBLIC_TOUR_API_KEY;
 
   if (!apiKey) {
+    const errorMsg =
+      "한국관광공사 API 키가 설정되지 않았습니다.\n" +
+      ".env 파일에 다음 중 하나를 설정하세요:\n" +
+      "  - TOUR_API_KEY (서버 사이드용, 권장)\n" +
+      "  - NEXT_PUBLIC_TOUR_API_KEY (클라이언트 사이드용)\n\n" +
+      "API 키 발급: https://www.data.go.kr/data/15101578/openapi.do";
+    console.error(errorMsg);
+    throw new Error(errorMsg);
+  }
+
+  // API 키가 비어있는 경우 체크
+  if (apiKey.trim() === "") {
     throw new Error(
-      "한국관광공사 API 키가 설정되지 않았습니다. " +
-        ".env 파일에 TOUR_API_KEY 또는 NEXT_PUBLIC_TOUR_API_KEY를 설정하세요.",
+      "한국관광공사 API 키가 비어있습니다. .env 파일의 API 키 값을 확인하세요.",
     );
   }
 
@@ -105,7 +116,9 @@ function getApiKey(): string {
  */
 function buildCommonParams(): URLSearchParams {
   const params = new URLSearchParams();
-  params.append("serviceKey", getApiKey());
+  // 한국관광공사 API는 serviceKey를 URL 인코딩해야 합니다
+  const apiKey = getApiKey();
+  params.append("serviceKey", apiKey);
   params.append("MobileOS", MOBILE_OS);
   params.append("MobileApp", MOBILE_APP);
   params.append("_type", RESPONSE_TYPE);
@@ -123,6 +136,11 @@ function buildCommonParams(): URLSearchParams {
  * @throws {Error} 처리된 에러
  */
 function handleApiError(error: any): never {
+  // 이미 Error 객체인 경우 (우리가 던진 에러)
+  if (error instanceof Error) {
+    throw error;
+  }
+
   if (error.response) {
     // HTTP 에러 응답
     const status = error.response.status;
@@ -143,8 +161,14 @@ function handleApiError(error: any): never {
     // 네트워크 에러
     throw new Error("네트워크 오류: 인터넷 연결을 확인하세요.");
   } else {
-    // 기타 에러
-    throw new Error(`알 수 없는 오류: ${error.message}`);
+    // 기타 에러 - 메시지가 있으면 사용, 없으면 기본 메시지
+    const errorMessage = error?.message || String(error) || "알 수 없는 오류";
+    console.error("기타 에러 상세:", {
+      error,
+      message: errorMessage,
+      stack: error?.stack,
+    });
+    throw new Error(`알 수 없는 오류: ${errorMessage}`);
   }
 }
 
@@ -206,6 +230,7 @@ async function fetchTourApi<T>(
   return retryFetch(async () => {
     // 공통 파라미터 생성
     const urlParams = buildCommonParams();
+    const apiKey = getApiKey();
 
     // 추가 파라미터 추가
     Object.entries(params).forEach(([key, value]) => {
@@ -230,6 +255,21 @@ async function fetchTourApi<T>(
 
       // HTTP 에러 체크
       if (!response.ok) {
+        // 실제 응답 본문도 확인
+        let errorBody = "";
+        try {
+          errorBody = await response.text();
+        } catch {
+          // 응답 본문 읽기 실패 시 무시
+        }
+        
+        console.error("API HTTP 에러:", {
+          status: response.status,
+          statusText: response.statusText,
+          url: url.replace(apiKey, "***"),
+          body: errorBody.substring(0, 500), // 처음 500자만
+        });
+        
         throw {
           response: {
             status: response.status,
@@ -239,16 +279,165 @@ async function fetchTourApi<T>(
       }
 
       // JSON 파싱
-      const data: ApiResponse<T> = await response.json();
+      let data: any;
+      try {
+        const responseText = await response.text();
+        console.log("[tour-api] ===== API 응답 원본 (전체) =====");
+        console.log(responseText);
+        console.log("[tour-api] ===== 응답 원본 끝 =====");
+        
+        try {
+          data = JSON.parse(responseText);
+        } catch (jsonError) {
+          console.error("API 응답 JSON 파싱 실패:", {
+            error: jsonError,
+            responseText: responseText.substring(0, 500),
+            url: url.replace(apiKey, "***"),
+          });
+          throw new Error("API 응답 형식이 올바르지 않습니다. JSON 파싱에 실패했습니다.");
+        }
+      } catch (parseError: any) {
+        // 이미 JSON 파싱 에러인 경우
+        if (parseError.message.includes("JSON 파싱")) {
+          throw parseError;
+        }
+        console.error("API 응답 읽기 실패:", {
+          error: parseError?.message,
+          url: url.replace(apiKey, "***"),
+        });
+        throw new Error("API 응답을 읽을 수 없습니다.");
+      }
+
+      // API 응답 구조 검증 및 로깅
+      console.log("[tour-api] ===== 파싱된 데이터 전체 구조 =====");
+      console.log(JSON.stringify(data, null, 2));
+      console.log("[tour-api] ===== 데이터 구조 분석 =====");
+      console.log({
+        hasData: !!data,
+        dataType: typeof data,
+        isArray: Array.isArray(data),
+        dataKeys: data ? Object.keys(data) : [],
+        hasResponse: !!(data && data.response),
+        responseKeys: data?.response ? Object.keys(data.response) : [],
+        hasBody: !!(data?.response?.body),
+        bodyKeys: data?.response?.body ? Object.keys(data.response.body) : [],
+        hasItems: !!(data?.response?.body?.items),
+        itemsType: data?.response?.body?.items ? typeof data.response.body.items : null,
+        isItemsArray: Array.isArray(data?.response?.body?.items),
+        hasItem: !!(data?.response?.body?.items?.item),
+        itemType: data?.response?.body?.items?.item ? typeof data.response.body.items.item : null,
+        isItemArray: Array.isArray(data?.response?.body?.items?.item),
+      });
+
+      // 한국관광공사 API 응답 구조 확인 및 처리
+      // 예상 구조: { response: { header: {...}, body: { items: { item: [...] } } } }
+      if (!data) {
+        console.error("API 응답이 null 또는 undefined입니다.");
+        throw new Error("API 응답이 비어있습니다.");
+      }
+
+      // response가 없는 경우 (다른 구조일 수 있음)
+      if (!data.response) {
+        console.error("API 응답 구조 오류 - response가 없습니다:", {
+          data: JSON.stringify(data).substring(0, 2000),
+          dataType: typeof data,
+          dataKeys: Object.keys(data),
+          url: url.replace(apiKey, "***"),
+        });
+        throw new Error("API 응답 구조가 예상과 다릅니다. response 필드가 없습니다.");
+      }
+
+      if (!data.response.header) {
+        console.error("API 응답 헤더 없음:", {
+          response: JSON.stringify(data.response).substring(0, 500),
+          url: url.replace(apiKey, "***"),
+        });
+        throw new Error("API 응답에 헤더 정보가 없습니다.");
+      }
 
       // API 응답 헤더 체크
       const { resultCode, resultMsg } = data.response.header;
+      
+      // 한국관광공사 API는 HTTP 200을 반환하지만 resultCode로 에러를 표시합니다
+      // 인증 실패는 보통 resultCode가 "SERVICE_KEY_NOT_REGISTERED_ERROR" 등
       if (resultCode !== "0000") {
+        // 인증 관련 에러 코드 처리 (공공데이터포털 일반적인 에러 코드)
+        const authErrorCodes = [
+          "SERVICE_KEY_NOT_REGISTERED_ERROR",
+          "SERVICE_KEY_IS_NOT_REGISTERED_ERROR",
+          "SERVICE_KEY_IS_NULL",
+          "SERVICE_KEY_IS_EMPTY",
+          "INVALID_SERVICE_KEY",
+          "AUTHENTICATION_FAILED",
+        ];
+        
+        const isAuthError = authErrorCodes.some((code) =>
+          resultCode.includes(code),
+        ) || resultCode.includes("KEY") && resultCode.includes("ERROR");
+
+        if (isAuthError) {
+          console.error("API 인증 실패:", {
+            resultCode,
+            resultMsg,
+            url: url.replace(apiKey, "***"),
+            hint: "환경변수 TOUR_API_KEY 또는 NEXT_PUBLIC_TOUR_API_KEY를 확인하세요.",
+          });
+          throw new Error(`API 인증 실패: ${resultMsg} (코드: ${resultCode})`);
+        }
+        
+        console.error("API 오류:", {
+          resultCode,
+          resultMsg,
+          url: url.replace(apiKey, "***"),
+        });
         throw new Error(`API 오류: ${resultMsg} (코드: ${resultCode})`);
       }
 
       // 데이터 반환
-      return data.response.body.items?.item || [];
+      console.log("[tour-api] ===== 데이터 추출 시도 =====");
+      
+      if (!data.response.body) {
+        console.warn("API 응답에 body가 없습니다:", {
+          response: JSON.stringify(data.response).substring(0, 500),
+        });
+        return [];
+      }
+
+      // 다양한 응답 구조 처리
+      let items: T[] = [];
+      
+      // 구조 1: response.body.items.item (배열)
+      if (data.response.body.items?.item) {
+        items = Array.isArray(data.response.body.items.item) 
+          ? data.response.body.items.item 
+          : [data.response.body.items.item];
+        console.log("[tour-api] 구조 1로 추출 성공:", items.length, "개");
+      }
+      // 구조 2: response.body.items (배열)
+      else if (Array.isArray(data.response.body.items)) {
+        items = data.response.body.items;
+        console.log("[tour-api] 구조 2로 추출 성공:", items.length, "개");
+      }
+      // 구조 3: response.body.item (배열)
+      else if (data.response.body.item) {
+        items = Array.isArray(data.response.body.item) 
+          ? data.response.body.item 
+          : [data.response.body.item];
+        console.log("[tour-api] 구조 3로 추출 성공:", items.length, "개");
+      }
+      // 구조 4: response.body (배열)
+      else if (Array.isArray(data.response.body)) {
+        items = data.response.body;
+        console.log("[tour-api] 구조 4로 추출 성공:", items.length, "개");
+      }
+      else {
+        console.warn("[tour-api] 알 수 없는 응답 구조:", {
+          body: JSON.stringify(data.response.body).substring(0, 500),
+        });
+      }
+
+      console.log("[tour-api] 최종 반환 데이터:", items.length, "개");
+      return items;
     } catch (error: any) {
       if (error.name === "AbortError") {
         throw new Error(`API 호출 타임아웃: ${DEFAULT_TIMEOUT}ms 초과`);

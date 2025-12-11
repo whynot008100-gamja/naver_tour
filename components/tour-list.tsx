@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/pagination';
 import { getAreaBasedList, searchKeyword } from '@/lib/api/tour-api';
 import type { TourItem } from '@/lib/types/tour';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, SearchX } from 'lucide-react';
 
 export function TourList() {
   const router = useRouter();
@@ -64,6 +64,8 @@ export function TourList() {
         });
       }
       
+      console.log('API Response:', { totalCount: data.totalCount, itemsCount: data.items.length });
+      
       setTours(data.items);
       setTotalCount(data.totalCount);
     } catch (err) {
@@ -98,13 +100,26 @@ export function TourList() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
-        {tours.map((tour) => (
-          <TourCard key={tour.contentid} tour={tour} />
+        {tours.map((tour, index) => (
+          <TourCard 
+            key={tour.contentid} 
+            tour={tour} 
+            priority={index === 0}
+          />
         ))}
       </div>
       
+      {/* 페이지네이션 정보 */}
+      {totalCount > 0 && (
+        <div className="text-sm text-muted-foreground text-center py-2">
+          전체 {totalCount.toLocaleString()}개 중{' '}
+          {((currentPage - 1) * numOfRows + 1).toLocaleString()}-
+          {Math.min(currentPage * numOfRows, totalCount).toLocaleString()}개 표시
+        </div>
+      )}
+      
       {/* 페이지네이션 */}
-      {totalPages > 1 && (
+      {totalCount > numOfRows && (
         <Pagination>
           <PaginationContent>
             <PaginationItem>
@@ -202,14 +217,24 @@ function ErrorMessage({ error, onRetry }: { error: string; onRetry: () => void }
 }
 
 function EmptyState() {
+  const router = useRouter();
+  
+  const handleReset = () => {
+    router.push('/');
+  };
+  
   return (
-    <div className="flex flex-col items-center justify-center p-8 space-y-4">
+    <div className="flex flex-col items-center justify-center p-12 space-y-4">
+      <SearchX className="h-16 w-16 text-muted-foreground" />
       <div className="text-center space-y-2">
-        <h3 className="text-lg font-semibold">관광지가 없습니다</h3>
+        <h3 className="text-lg font-semibold">검색 결과가 없습니다</h3>
         <p className="text-sm text-muted-foreground">
-          검색 조건을 변경해보세요.
+          다른 검색어나 필터를 시도해보세요.
         </p>
       </div>
+      <Button onClick={handleReset} variant="outline">
+        필터 초기화
+      </Button>
     </div>
   );
 }
