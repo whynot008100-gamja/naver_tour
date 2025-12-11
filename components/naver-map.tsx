@@ -18,6 +18,7 @@ export function NaverMap() {
   const areaCode = searchParams.get('areaCode') || undefined;
   const contentTypeId = searchParams.get('contentTypeId') || undefined;
   const sort = searchParams.get('sort') || 'A';
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   // 데이터 로딩
   useEffect(() => {
@@ -30,7 +31,7 @@ export function NaverMap() {
             areaCode,
             contentTypeId,
             numOfRows: 12,
-            pageNo: 1,
+            pageNo: currentPage,
           });
         } else {
           data = await getAreaBasedList({
@@ -38,7 +39,7 @@ export function NaverMap() {
             contentTypeId,
             arrange: sort as 'A' | 'C',
             numOfRows: 12,
-            pageNo: 1,
+            pageNo: currentPage,
           });
         }
         setTours(data.items);
@@ -48,7 +49,7 @@ export function NaverMap() {
     };
 
     fetchTours();
-  }, [keyword, areaCode, contentTypeId, sort]);
+  }, [keyword, areaCode, contentTypeId, sort, currentPage]);
 
   // 지도 초기화
   useEffect(() => {
@@ -151,7 +152,6 @@ export function NaverMap() {
     <div 
       ref={mapRef} 
       className="w-full h-full"
-      style={{ minHeight: '400px' }}
     />
   );
 }

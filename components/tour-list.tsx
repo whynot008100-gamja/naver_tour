@@ -1,29 +1,44 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { TourCard } from './tour-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 import { getAreaBasedList, searchKeyword } from '@/lib/api/tour-api';
 import type { TourItem } from '@/lib/types/tour';
 import { AlertCircle } from 'lucide-react';
 
 export function TourList() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [tours, setTours] = useState<TourItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
   
-  // URL 쿼리 파라미터에서 필터 값 가져오기
+  // URL 쿼리 파라미터에서 값 가져오기
   const keyword = searchParams.get('keyword') || undefined;
   const areaCode = searchParams.get('areaCode') || undefined;
   const contentTypeId = searchParams.get('contentTypeId') || undefined;
   const sort = searchParams.get('sort') || 'A';
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+
+  const numOfRows = 12;
+  const totalPages = Math.ceil(totalCount / numOfRows);
 
   useEffect(() => {
     fetchTours();
-  }, [keyword, areaCode, contentTypeId, sort]); // 검색어 및 필터 변경 시 재호출
+  }, [keyword, areaCode, contentTypeId, sort, currentPage]);
 
   const fetchTours = async () => {
     try {
@@ -32,32 +47,40 @@ export function TourList() {
       
       let data;
       if (keyword) {
-        // 검색 API 사용
         data = await searchKeyword({
           keyword,
           areaCode,
           contentTypeId,
-          numOfRows: 12,
-          pageNo: 1,
+          numOfRows,
+          pageNo: currentPage,
         });
       } else {
-        // 필터 API 사용
         data = await getAreaBasedList({
           areaCode,
           contentTypeId,
           arrange: sort as 'A' | 'C',
-          numOfRows: 12,
-          pageNo: 1,
+          numOfRows,
+          pageNo: currentPage,
         });
       }
       
       setTours(data.items);
+      setTotalCount(data.totalCount);
     } catch (err) {
       console.error('관광지 목록 조회 실패:', err);
       setError('관광지 정보를 불러오는데 실패했습니다.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`?${params.toString()}`);
+    
+    // 페이지 변경 시 스크롤을 맨 위로
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading) {
@@ -73,10 +96,75 @@ export function TourList() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
-      {tours.map((tour) => (
-        <TourCard key={tour.contentid} tour={tour} />
-      ))}
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
+        {tours.map((tour) => (
+          <TourCard key={tour.contentid} tour={tour} />
+        ))}
+      </div>
+      
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage > 1) handlePageChange(currentPage - 1);
+                }}
+                className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+            
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+              
+              return (
+                <PaginationItem key={pageNum}>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(pageNum);
+                    }}
+                    isActive={currentPage === pageNum}
+                  >
+                    {pageNum}
+                  </PaginationLink>
+                </PaginationItem>
+              );
+            })}
+            
+            {totalPages > 5 && currentPage < totalPages - 2 && (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            )}
+            
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                }}
+                className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }
