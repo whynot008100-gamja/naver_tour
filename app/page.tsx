@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { TourList } from '@/components/tour-list';
+import { TourFilters } from '@/components/tour-filters';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'list' | 'map'>('list');
@@ -44,14 +45,9 @@ export default function HomePage() {
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">관광지 목록</h1>
             <div className="space-y-4">
-              <div className="p-4 border rounded-lg bg-muted/50">
-                <p className="text-muted-foreground">
-                  필터 컴포넌트가 여기 표시됩니다.
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  (Phase 2-C에서 구현 예정)
-                </p>
-              </div>
+              {/* 필터 */}
+              <TourFilters />
+              
               {/* 관광지 목록 */}
               <TourList />
             </div>
