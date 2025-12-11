@@ -476,11 +476,11 @@
 
 ## Phase 5: 북마크 페이지 (`/bookmarks`) - 선택 사항
 
-- [ ] A.Supabase 설정 확인
-  - [ ] `bookmarks` 테이블 확인 (db.sql 참고)
-    - [ ] `users` 테이블과의 관계 확인
-    - [ ] 인덱스 확인 (user_id, content_id, created_at)
-    - [ ] RLS 비활성화 확인 (개발 환경)
+- [x] A.Supabase 설정 확인
+  - [x] `bookmarks` 테이블 확인 (db.sql 참고)
+    - [x] `users` 테이블과의 관계 확인
+    - [x] 인덱스 확인 (user_id, content_id, created_at)
+    - [x] RLS 비활성화 확인 (개발 환경)
 - [ ] B북마크 목록 페이지
   - [ ] `app/bookmarks/page.tsx` 생성
     - [ ] 인증된 사용자만 접근 가능
