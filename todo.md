@@ -4,7 +4,7 @@
 
 ## Phase 1: 기본 구조 & 공통 설정
 
-- [ ] A. 프로젝트 셋업
+- [x] A. 프로젝트 셋업
 
   **구현할 주요 컴포넌트/기능:**
 
@@ -20,28 +20,28 @@
   - 네이버 지도 API: `ncpKeyId` 사용 (구 `ncpClientId` 아님)
   - Supabase RLS 비활성화 (개발 환경)
 
-  - [ ] 환경변수 설정 (`.env`)
-    - [ ] `NEXT_PUBLIC_TOUR_API_KEY` (한국관광공사 API - 클라이언트용)
-    - [ ] `TOUR_API_KEY` (한국관광공사 API - 서버 사이드용)
-    - [ ] `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` (네이버 지도 - ncpKeyId)
-    - [ ] Clerk 인증 키 확인
-      - [ ] `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-      - [ ] `CLERK_SECRET_KEY`
-    - [ ] Supabase 키 확인
-      - [ ] `NEXT_PUBLIC_SUPABASE_URL`
-      - [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-      - [ ] `SUPABASE_SERVICE_ROLE_KEY`
-      - [ ] `NEXT_PUBLIC_STORAGE_BUCKET` (기본값: uploads)
+  - [x] 환경변수 설정 (`.env`)
+    - [x] `NEXT_PUBLIC_TOUR_API_KEY` (한국관광공사 API - 클라이언트용)
+    - [x] `TOUR_API_KEY` (한국관광공사 API - 서버 사이드용)
+    - [x] `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` (네이버 지도 - ncpKeyId)
+    - [x] Clerk 인증 키 확인
+      - [x] `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+      - [x] `CLERK_SECRET_KEY`
+    - [x] Supabase 키 확인
+      - [x] `NEXT_PUBLIC_SUPABASE_URL`
+      - [x] `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+      - [x] `SUPABASE_SERVICE_ROLE_KEY`
+      - [x] `NEXT_PUBLIC_STORAGE_BUCKET` (기본값: uploads)
   - [x] `.env.example` 파일 생성 (팀원 공유용 템플릿)
   - [x] 환경변수 문서화 (README.md 또는 별도 문서)
-  - [ ] 환경변수 로드 테스트 (개발 서버 실행)
-  - [ ] API 키 유효성 테스트
-    - [ ] 한국관광공사 API 테스트 호출
-    - [ ] 네이버 지도 API 초기화 테스트
-    - [ ] Clerk 로그인 페이지 접근 테스트
-    - [ ] Supabase 데이터베이스 연결 테스트
+  - [x] 환경변수 로드 테스트 (개발 서버 실행)
+  - [x] API 키 유효성 테스트
+    - [x] 한국관광공사 API 테스트 호출
+    - [x] 네이버 지도 API 초기화 테스트
+    - [x] Clerk 로그인 페이지 접근 테스트
+    - [x] Supabase 데이터베이스 연결 테스트
 
-- [ ] B. API 클라이언트 구현
+- [x] B. API 클라이언트 구현
 
   **구현할 주요 컴포넌트/기능:**
 
@@ -76,11 +76,11 @@
     - [x] `getDetailPetTour()` - 반려동물 정보 (`detailPetTour2`)
     - [x] JSDoc 주석 추가 (각 함수 설명)
   - [x] 테스트 API Route 생성 (`app/api/test-tour/route.ts`)
-  - [ ] 단위 테스트 (수동)
-    - [ ] 환경변수 로드 테스트
-    - [ ] 개별 API 함수 테스트
-    - [ ] 에러 처리 테스트 (401, 404, 네트워크 에러)
-  - [ ] 통합 테스트 (브라우저에서 `/api/test-tour` 확인)
+  - [x] 단위 테스트 (수동)
+    - [x] 환경변수 로드 테스트
+    - [x] 개별 API 함수 테스트
+    - [x] 에러 처리 테스트 (401, 404, 네트워크 에러)
+  - [x] 통합 테스트 (브라우저에서 `/api/test-tour` 확인)
 
 - [x] C.타입 정의
 
@@ -115,7 +115,7 @@
   - [x] `components/ui/loading.tsx` - 로딩 스피너
   - [x] `components/ui/skeleton.tsx` - 스켈레톤 UI
   - [x] `components/ui/error.tsx` - 에러 메시지
-  - [ ] `components/ui/toast.tsx` - 토스트 알림 (Phase 2에서 필요 시 추가)
+  - [ ] `components/ui/toast.tsx` - 토스트 알림 (미구현)
 
 ## Phase 2: 홈페이지 (`/`) - 관광지 목록
 
