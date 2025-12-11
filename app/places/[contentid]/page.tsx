@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { InfoRow } from '@/components/tour-detail/info-row';
 import { CopyButton } from '@/components/tour-detail/copy-button';
 import { OperatingInfo } from '@/components/tour-detail/operating-info';
+import { ImageGallery } from '@/components/tour-detail/image-gallery';
 import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 import {
   MapPin,
@@ -142,6 +143,9 @@ export default async function PlaceDetailPage({
               contentId={contentid} 
               contentTypeId={detail.contenttypeid}
             />
+            
+            {/* 이미지 갤러리 */}
+            <ImageGallery contentId={contentid} />
           </div>
         </div>
       </main>
