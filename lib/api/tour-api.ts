@@ -567,10 +567,6 @@ export async function getDetailCommon(contentId: string): Promise<any[]> {
 
   return fetchTourApi("/detailCommon2", {
     contentId,
-    defaultYN: "Y",
-    firstImageYN: "Y",
-    mapinfoYN: "Y",
-    overviewYN: "Y",
   });
 }
 
@@ -621,8 +617,6 @@ export async function getDetailImage(contentId: string): Promise<any[]> {
 
   return fetchTourApi("/detailImage2", {
     contentId,
-    imageYN: "Y",
-    subImageYN: "Y",
   });
 }
 
