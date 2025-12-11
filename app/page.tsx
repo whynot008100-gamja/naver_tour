@@ -1,77 +1,82 @@
 'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'list' | 'map'>('list');
 
   return (
-    <main className="flex-1">
-      <div className="container mx-auto px-4 py-6">
-        {/* 페이지 헤더 */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">관광지 목록</h1>
-          <p className="text-muted-foreground mt-2">
-            전국의 관광지 정보를 검색하고 확인하세요
-          </p>
-        </div>
-
-        {/* 모바일 탭 (모바일만 표시) */}
-        <div className="lg:hidden mb-4 flex gap-2 border-b">
-          <button
+    <main className="h-[calc(100vh-64px)]">
+      {/* 모바일 탭 버튼 (1024px 미만에서만 표시) */}
+      <div className="lg:hidden border-b bg-background">
+        <div className="flex gap-2 p-2">
+          <Button
+            variant={activeTab === 'list' ? 'default' : 'outline'}
             onClick={() => setActiveTab('list')}
-            className={`flex-1 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'list'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className="flex-1"
+            aria-label="관광지 목록 보기"
+            aria-pressed={activeTab === 'list'}
           >
             목록
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={activeTab === 'map' ? 'default' : 'outline'}
             onClick={() => setActiveTab('map')}
-            className={`flex-1 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'map'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className="flex-1"
+            aria-label="지도 보기"
+            aria-pressed={activeTab === 'map'}
           >
             지도
-          </button>
+          </Button>
         </div>
+      </div>
 
-        {/* 메인 콘텐츠 영역 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* 왼쪽: 필터 + 관광지 목록 */}
-          <div className={`space-y-4 ${activeTab === 'map' ? 'hidden lg:block' : ''}`}>
-            {/* 필터 영역 (Phase 2-C에서 구현) */}
-            <div className="rounded-lg border bg-card p-4">
-              <h2 className="text-lg font-semibold mb-3">필터</h2>
-              <p className="text-sm text-muted-foreground">
-                Phase 2-C에서 구현 예정
-              </p>
-            </div>
-
-            {/* 관광지 목록 (Phase 2-B에서 구현) */}
+      {/* 메인 컨테이너 */}
+      <div className="h-full lg:grid lg:grid-cols-2">
+        {/* 왼쪽 영역: 필터 + 관광지 목록 */}
+        <div
+          className={`h-full overflow-y-auto bg-background ${
+            activeTab === 'list' ? 'block' : 'hidden'
+          } lg:block`}
+        >
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">관광지 목록</h1>
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold">관광지 목록</h2>
-              <p className="text-sm text-muted-foreground">
-                Phase 2-B에서 구현 예정
-              </p>
+              <div className="p-4 border rounded-lg bg-muted/50">
+                <p className="text-muted-foreground">
+                  필터 컴포넌트가 여기 표시됩니다.
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  (Phase 2-C에서 구현 예정)
+                </p>
+              </div>
+              <div className="p-8 border rounded-lg bg-muted/50 text-center">
+                <p className="text-muted-foreground">
+                  관광지 목록이 여기 표시됩니다.
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  (Phase 2-B에서 구현 예정)
+                </p>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* 오른쪽: 네이버 지도 */}
-          <div className={`${activeTab === 'list' ? 'hidden lg:block' : ''}`}>
-            <div className="sticky top-20">
-              <div className="rounded-lg border bg-card p-4 h-[600px] flex items-center justify-center">
-                <div className="text-center">
-                  <h2 className="text-lg font-semibold mb-2">네이버 지도</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Phase 2-E에서 구현 예정
-                  </p>
-                </div>
-              </div>
+        {/* 오른쪽 영역: 네이버 지도 */}
+        <div
+          className={`h-full bg-muted/30 ${
+            activeTab === 'map' ? 'block' : 'hidden'
+          } lg:block`}
+        >
+          <div className="h-full flex items-center justify-center p-6">
+            <div className="text-center">
+              <p className="text-muted-foreground text-lg">
+                네이버 지도가 여기 표시됩니다.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                (Phase 2의 네이버 지도 연동에서 구현 예정)
+              </p>
             </div>
           </div>
         </div>
