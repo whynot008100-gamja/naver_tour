@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { DetailHeader } from '@/components/detail-header';
@@ -9,6 +10,7 @@ import { CopyButton } from '@/components/tour-detail/copy-button';
 import { OperatingInfo } from '@/components/tour-detail/operating-info';
 import { ImageGallery } from '@/components/tour-detail/image-gallery';
 import { DetailMap } from '@/components/tour-detail/detail-map';
+import { ShareButton } from '@/components/tour-detail/share-button';
 import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 import {
   MapPin,
@@ -32,6 +34,58 @@ const CONTENT_TYPE_COLORS: Record<string, string> = {
 function extractUrl(html: string): string {
   const match = html.match(/href="([^"]+)"/);
   return match ? match[1] : html;
+}
+
+// Open Graph 메타태그 생성
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ contentid: string }>;
+}): Promise<Metadata> {
+  const { contentid } = await params;
+
+  try {
+    const details = await getDetailCommon(contentid);
+    
+    if (!details || details.length === 0) {
+      return {
+        title: '관광지 정보',
+      };
+    }
+
+    const detail = details[0];
+    const description = detail.overview 
+      ? detail.overview.substring(0, 100) + '...'
+      : `${detail.addr1 || ''} 관광지 정보`;
+
+    return {
+      title: `${detail.title} | My Trip`,
+      description: description,
+      openGraph: {
+        title: detail.title,
+        description: description,
+        images: detail.firstimage ? [
+          {
+            url: detail.firstimage,
+            width: 1200,
+            height: 630,
+            alt: detail.title,
+          }
+        ] : [],
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: detail.title,
+        description: description,
+        images: detail.firstimage ? [detail.firstimage] : [],
+      },
+    };
+  } catch (error) {
+    return {
+      title: '관광지 정보',
+    };
+  }
 }
 
 export default async function PlaceDetailPage({
@@ -72,12 +126,17 @@ export default async function PlaceDetailPage({
               </div>
             )}
             
-            {/* 제목 + 뱃지 */}
+            {/* 제목 + 뱃지 + 공유 버튼 */}
             <div className="space-y-3">
-              <Badge className={badgeColor}>
-                {contentTypeName}
-              </Badge>
-              <h1 className="text-3xl font-bold">{detail.title}</h1>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-3">
+                  <Badge className={badgeColor}>
+                    {contentTypeName}
+                  </Badge>
+                  <h1 className="text-3xl font-bold">{detail.title}</h1>
+                </div>
+                <ShareButton title={detail.title} />
+              </div>
             </div>
             
             {/* 기본 정보 */}
