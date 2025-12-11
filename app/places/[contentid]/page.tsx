@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { InfoRow } from '@/components/tour-detail/info-row';
 import { CopyButton } from '@/components/tour-detail/copy-button';
+import { OperatingInfo } from '@/components/tour-detail/operating-info';
 import { CONTENT_TYPE_NAMES } from '@/lib/types/tour';
 import {
   MapPin,
@@ -135,6 +136,12 @@ export default async function PlaceDetailPage({
                 </CardContent>
               </Card>
             )}
+            
+            {/* 운영 정보 */}
+            <OperatingInfo 
+              contentId={contentid} 
+              contentTypeId={detail.contenttypeid}
+            />
           </div>
         </div>
       </main>

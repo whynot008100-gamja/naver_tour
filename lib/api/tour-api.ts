@@ -571,7 +571,6 @@ export async function getDetailCommon(contentId: string): Promise<any[]> {
     firstImageYN: "Y",
     areacodeYN: "Y",
     catcodeYN: "Y",
-    addrinfoYN: "Y",
     mapinfoYN: "Y",
     overviewYN: "Y",
   });
