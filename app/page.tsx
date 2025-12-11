@@ -50,7 +50,7 @@ export default function HomePage() {
         {/* 2. 중앙 영역 (관광지 목록) */}
         <div
           className={`
-            bg-muted/10
+            bg-muted/10 overflow-y-auto h-[calc(100vh-64px)]
             ${activeTab === 'list' ? 'block' : 'hidden'} lg:block
           `}
         >

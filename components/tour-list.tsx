@@ -33,7 +33,7 @@ export function TourList() {
   const sort = searchParams.get('sort') || 'A';
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
-  const numOfRows = 12;
+  const numOfRows = 100;
   const totalPages = Math.ceil(totalCount / numOfRows);
 
   useEffect(() => {
@@ -108,15 +108,6 @@ export function TourList() {
           />
         ))}
       </div>
-      
-      {/* 페이지네이션 정보 */}
-      {totalCount > 0 && (
-        <div className="text-sm text-muted-foreground text-center py-2">
-          전체 {totalCount.toLocaleString()}개 중{' '}
-          {((currentPage - 1) * numOfRows + 1).toLocaleString()}-
-          {Math.min(currentPage * numOfRows, totalCount).toLocaleString()}개 표시
-        </div>
-      )}
       
       {/* 페이지네이션 */}
       {totalCount > numOfRows && (
